@@ -1,0 +1,17 @@
+---
+name: "TMDB Trailers"
+guid: "69104C31-D23F-4040-B99C-8913C09751D6"
+version: "1.0.0.0"
+targetAbi: "10.6.0.0"
+owner: "crobibero"
+overview: "Watch trailers from TMDB"
+description: >
+  Watch trailers from TMDB
+category: "Channels"
+artifacts:
+- "Jellyfin.Plugin.Tmdb.Trailers.dll"
+- "TMDLib.dll"
+- "VimeoDotNet.dll"
+- "YouTubeFetcher.Core"
+changelog: >
+  Initial release
