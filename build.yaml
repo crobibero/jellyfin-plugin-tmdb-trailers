@@ -12,6 +12,6 @@ artifacts:
 - "Jellyfin.Plugin.Tmdb.Trailers.dll"
 - "TMDbLib.dll"
 - "VimeoDotNet.dll"
-- "YouTubeFetcher.Core"
+- "YouTubeFetcher.Core.dll"
 changelog: >
   Initial release
