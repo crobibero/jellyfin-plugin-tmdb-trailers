@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Jellyfin.Plugin.Tmdb.Trailers</name>
+    </assembly>
+    <members>
+        <member name="T:Jellyfin.Plugin.Tmdb.Trailers.Channel">
+            <summary>
+            Trailers Channel.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.Tmdb.Trailers.Channel.#ctor(Microsoft.Extensions.Logging.ILogger{Jellyfin.Plugin.Tmdb.Trailers.Channel})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Jellyfin.Plugin.Tmdb.Trailers.Channel"/> class.
+            </summary>
+            <param name="logger">Instance of the <see cref="T:Microsoft.Extensions.Logging.ILogger`1"/> interface.</param>
+        </member>
+        <member name="P:Jellyfin.Plugin.Tmdb.Trailers.Channel.Name">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.Tmdb.Trailers.Channel.Description">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.Tmdb.Trailers.Channel.DataVersion">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.Tmdb.Trailers.Channel.HomePageUrl">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.Tmdb.Trailers.Channel.ParentalRating">
+            <inheritdoc />
+        </member>
+        <member name="M:Jellyfin.Plugin.Tmdb.Trailers.Channel.GetChannelFeatures">
+            <inheritdoc />
+        </member>
+        <member name="M:Jellyfin.Plugin.Tmdb.Trailers.Channel.IsEnabledFor(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:Jellyfin.Plugin.Tmdb.Trailers.Channel.GetChannelItems(MediaBrowser.Controller.Channels.InternalChannelItemQuery,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:Jellyfin.Plugin.Tmdb.Trailers.Channel.GetChannelImage(MediaBrowser.Model.Entities.ImageType,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:Jellyfin.Plugin.Tmdb.Trailers.Channel.GetSupportedChannelImages">
+            <inheritdoc />
+        </member>
+        <member name="M:Jellyfin.Plugin.Tmdb.Trailers.Channel.Dispose">
+            <summary>
+            Dispose.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.Tmdb.Trailers.Channel.Dispose(System.Boolean)">
+            <summary>
+            Dispose.
+            </summary>
+            <param name="disposing">Dispose everything.</param>
+        </member>
+        <member name="M:Jellyfin.Plugin.Tmdb.Trailers.Channel.GetPageNumber(System.Nullable{System.Int32})">
+            <summary>
+            Calculate page size from start index.
+            </summary>
+            <param name="startIndex">Start index.</param>
+            <returns>The page number.</returns>
+        </member>
+        <member name="M:Jellyfin.Plugin.Tmdb.Trailers.Channel.GetChannelTypes">
+            <summary>
+            Get types of trailers.
+            </summary>
+            <returns><see cref="T:MediaBrowser.Controller.Channels.ChannelItemResult"/> containing the types of trailers.</returns>
+        </member>
+        <member name="M:Jellyfin.Plugin.Tmdb.Trailers.Channel.GetPlaybackUrlAsync(System.String,System.String)">
+            <summary>
+            Get playback url from site and key.
+            </summary>
+            <param name="site">Site to play from.</param>
+            <param name="key">Video key.</param>
+            <returns>Video playback url.</returns>
+        </member>
+        <member name="T:Jellyfin.Plugin.Tmdb.Trailers.Configuration.PluginConfiguration">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.Tmdb.Trailers.Configuration.PluginConfiguration.ApiKey">
+            <summary>
+            Gets or sets the api key.
+            Used to authenticate with tmdb.
+            Using Jellyfin ApiKey.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.Tmdb.Trailers.Configuration.PluginConfiguration.Language">
+            <summary>
+            Gets or sets the language.
+            Pass a ISO 639-1 value to display translated data for the fields that support it.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.Tmdb.Trailers.Configuration.PluginConfiguration.Region">
+            <summary>
+            Gets or sets region.
+            Specify a ISO 3166-1 code to filter release dates. Must be uppercase.
+            </summary>
+        </member>
+        <member name="T:Jellyfin.Plugin.Tmdb.Trailers.TmdbTrailerPlugin">
+            <summary>
+            Plugin entrypoint.
+            </summary>
+        </member>
+        <member name="M:Jellyfin.Plugin.Tmdb.Trailers.TmdbTrailerPlugin.#ctor(MediaBrowser.Common.Configuration.IApplicationPaths,MediaBrowser.Model.Serialization.IXmlSerializer)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Jellyfin.Plugin.Tmdb.Trailers.TmdbTrailerPlugin"/> class.
+            </summary>
+            <param name="applicationPaths">Instance of the <see cref="T:MediaBrowser.Common.Configuration.IApplicationPaths"/> interface.</param>
+            <param name="xmlSerializer">Instance of the <see cref="T:MediaBrowser.Model.Serialization.IXmlSerializer"/> interface.</param>
+        </member>
+        <member name="P:Jellyfin.Plugin.Tmdb.Trailers.TmdbTrailerPlugin.Instance">
+            <summary>
+            Gets the plugin instance.
+            </summary>
+        </member>
+        <member name="P:Jellyfin.Plugin.Tmdb.Trailers.TmdbTrailerPlugin.Name">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.Tmdb.Trailers.TmdbTrailerPlugin.Description">
+            <inheritdoc />
+        </member>
+        <member name="P:Jellyfin.Plugin.Tmdb.Trailers.TmdbTrailerPlugin.Id">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

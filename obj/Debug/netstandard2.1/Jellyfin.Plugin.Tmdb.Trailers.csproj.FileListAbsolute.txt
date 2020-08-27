@@ -1,0 +1,11 @@
+C:\Users\Cody\Code\Jellyfin\plugins\jellyfin-plugin-tmdb-trailers\Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers\obj\Debug\netstandard2.1\Jellyfin.Plugin.Tmdb.Trailers.csprojAssemblyReference.cache
+C:\Users\Cody\Code\Jellyfin\plugins\jellyfin-plugin-tmdb-trailers\Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers\obj\Debug\netstandard2.1\Jellyfin.Plugin.Tmdb.Trailers.AssemblyInfoInputs.cache
+C:\Users\Cody\Code\Jellyfin\plugins\jellyfin-plugin-tmdb-trailers\Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers\obj\Debug\netstandard2.1\Jellyfin.Plugin.Tmdb.Trailers.AssemblyInfo.cs
+C:\Users\Cody\Code\Jellyfin\plugins\jellyfin-plugin-tmdb-trailers\Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers\obj\Debug\netstandard2.1\Jellyfin.Plugin.Tmdb.Trailers.csproj.CoreCompileInputs.cache
+C:\Users\Cody\Code\Jellyfin\plugins\jellyfin-plugin-tmdb-trailers\Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers\obj\Debug\netstandard2.1\Jellyfin.Plugin.Tmdb.Trailers.xml
+C:\Users\Cody\Code\Jellyfin\plugins\jellyfin-plugin-tmdb-trailers\Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers\bin\Debug\netstandard2.1\Jellyfin.Plugin.Tmdb.Trailers.deps.json
+C:\Users\Cody\Code\Jellyfin\plugins\jellyfin-plugin-tmdb-trailers\Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers\bin\Debug\netstandard2.1\Jellyfin.Plugin.Tmdb.Trailers.dll
+C:\Users\Cody\Code\Jellyfin\plugins\jellyfin-plugin-tmdb-trailers\Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers\bin\Debug\netstandard2.1\Jellyfin.Plugin.Tmdb.Trailers.pdb
+C:\Users\Cody\Code\Jellyfin\plugins\jellyfin-plugin-tmdb-trailers\Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers\bin\Debug\netstandard2.1\Jellyfin.Plugin.Tmdb.Trailers.xml
+C:\Users\Cody\Code\Jellyfin\plugins\jellyfin-plugin-tmdb-trailers\Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers\obj\Debug\netstandard2.1\Jellyfin.Plugin.Tmdb.Trailers.dll
+C:\Users\Cody\Code\Jellyfin\plugins\jellyfin-plugin-tmdb-trailers\Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers\obj\Debug\netstandard2.1\Jellyfin.Plugin.Tmdb.Trailers.pdb
