@@ -10,7 +10,7 @@ description: >
 category: "Channels"
 artifacts:
 - "Jellyfin.Plugin.Tmdb.Trailers.dll"
-- "TMDLib.dll"
+- "TMDbLib.dll"
 - "VimeoDotNet.dll"
 - "YouTubeFetcher.Core"
 changelog: >
