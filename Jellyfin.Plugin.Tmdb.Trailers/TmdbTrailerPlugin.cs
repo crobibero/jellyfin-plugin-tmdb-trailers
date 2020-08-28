@@ -18,7 +18,9 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// </summary>
         /// <param name="applicationPaths">Instance of the <see cref="IApplicationPaths"/> interface.</param>
         /// <param name="xmlSerializer">Instance of the <see cref="IXmlSerializer"/> interface.</param>
-        public TmdbTrailerPlugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer)
+        public TmdbTrailerPlugin(
+            IApplicationPaths applicationPaths,
+            IXmlSerializer xmlSerializer)
             : base(applicationPaths, xmlSerializer)
         {
             Instance = this;
@@ -33,7 +35,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         public override string Name => "TMDb Trailers";
 
         /// <inheritdoc />
-        public override string Description => "Watch movie trailers.";
+        public override string Description => "Watch movie trailers and extras.";
 
         /// <inheritdoc />
         public override Guid Id => Guid.Parse("69104C31-D23F-4040-B99C-8913C09751D6");

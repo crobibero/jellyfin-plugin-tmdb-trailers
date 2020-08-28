@@ -3,8 +3,8 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <RootNamespace>Jellyfin.Plugin.Tmdb.Trailers</RootNamespace>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <FileVersion>2.0.0.0</FileVersion>
+        <AssemblyVersion>3.0.0.0</AssemblyVersion>
+        <FileVersion>3.0.0.0</FileVersion>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
@@ -12,12 +12,11 @@
     <ItemGroup>
       <PackageReference Include="Jellyfin.Controller" Version="10.6.0" />
       <PackageReference Include="TMDbLib" Version="1.6.0" />
-      <PackageReference Include="VimeoDotNet" Version="2.0.0.23" />
       <PackageReference Include="YouTubeFetcher.Core" Version="1.0.4" />
     </ItemGroup>
 
     <!-- Code Analyzers-->
-    <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8" PrivateAssets="All" />
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" PrivateAssets="All" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="All" />
@@ -32,7 +31,7 @@
       <EmbeddedResource Include="Config\configPage.html" />
     </ItemGroup>
 
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <PropertyGroup>
         <CodeAnalysisRuleSet>../jellyfin.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 

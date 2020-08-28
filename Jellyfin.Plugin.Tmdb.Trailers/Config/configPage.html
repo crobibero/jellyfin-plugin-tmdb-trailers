@@ -40,6 +40,49 @@
                                 default: null
                             </div>
                         </div>
+                        <div class="checkboxContainer">
+                            <label>
+                                <input type="checkbox" is="emby-checkbox" id="chkTmdbEnableExtras" />
+                                <span>Enable Movie Extras Channel:</span>
+                            </label>
+                        </div>
+                        <div class="checkboxContainer">
+                            <label>
+                                <input type="checkbox" is="emby-checkbox" id="chkTmdbEnableTrailers" />
+                                <span>Enable Movie Trailers Channel:</span>
+                            </label>
+                        </div>
+                        <div class="checkboxContainer">
+                            <label>
+                                <input type="checkbox" is="emby-checkbox" id="chkTmdbEnableTrailersUpcoming" />
+                                <span>Enable Upcoming Movies Trailers:</span>
+                            </label>
+                        </div>
+                        <div class="checkboxContainer">
+                            <label>
+                                <input type="checkbox" is="emby-checkbox" id="chkTmdbEnableTrailersNowPlaying" />
+                                <span>Enable Now Playing Movies Trailers:</span>
+                            </label>
+                        </div>
+                        <div class="checkboxContainer">
+                            <label>
+                                <input type="checkbox" is="emby-checkbox" id="chkTmdbEnableTrailersPopular" />
+                                <span>Enable Popular Movies Trailers:</span>
+                            </label>
+                        </div>
+                        <div class="checkboxContainer">
+                            <label>
+                                <input type="checkbox" is="emby-checkbox" id="chkTmdbEnableTrailersTopRated" />
+                                <span>Enable Top Rated Movies Trailers:</span>
+                            </label>
+                        </div>
+                        <div class="inputContainer">
+                            <input is="emby-input" type="text" id="txtTmdbTrailerLimit" label="Trailer Limit:" />
+                            <div class="fieldDescription">
+                                The maximum number of trailers to retrieve per category.
+                                default: 20
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <button is="emby-button" type="submit" data-theme="b" class="raised button-submit block">
@@ -61,7 +104,14 @@
 
             txtTmdbLanguage: document.getElementById("txtTmdbLanguage"),
             txtTmdbRegion: document.getElementById("txtTmdbRegion"),
-            txtTmdbMaxBitrate: document.getElementById("txtTmdbMaxBitrate")
+            txtTmdbMaxBitrate: document.getElementById("txtTmdbMaxBitrate"),
+            chkTmdbEnableExtras: document.getElementById("chkTmdbEnableExtras"),
+            chkTmdbEnableTrailers: document.getElementById("chkTmdbEnableTrailers"),
+            chkTmdbEnableTrailersUpcoming: document.getElementById("chkTmdbEnableTrailersUpcoming"),
+            chkTmdbEnableTrailersNowPlaying: document.getElementById("chkTmdbEnableTrailersNowPlaying"),
+            chkTmdbEnableTrailersPopular: document.getElementById("chkTmdbEnableTrailersPopular"),
+            chkTmdbEnableTrailersTopRated: document.getElementById("chkTmdbEnableTrailersTopRated"),
+            txtTmdbTrailerLimit: document.getElementById("txtTmdbTrailerLimit")
         };
 
         window.addEventListener("pageshow", function (_) {
@@ -71,6 +121,13 @@
                 TmdbTrailerPlugin.txtTmdbLanguage.value = config.Language || '';
                 TmdbTrailerPlugin.txtTmdbRegion.value = config.Region || '';
                 TmdbTrailerPlugin.txtTmdbMaxBitrate.value = config.MaxBitrate || '';
+                TmdbTrailerPlugin.chkTmdbEnableExtras.checked = config.EnableExtrasChannel;
+                TmdbTrailerPlugin.chkTmdbEnableTrailers.checked = config.EnableTrailersChannel;
+                TmdbTrailerPlugin.chkTmdbEnableTrailersUpcoming.checked = config.EnableTrailersUpcoming;
+                TmdbTrailerPlugin.chkTmdbEnableTrailersNowPlaying.checked = config.EnableTrailersNowPlaying;
+                TmdbTrailerPlugin.chkTmdbEnableTrailersPopular.checked = config.EnableTrailersPopular;
+                TmdbTrailerPlugin.chkTmdbEnableTrailersTopRated.checked = config.EnableTrailersTopRated;
+                TmdbTrailerPlugin.txtTmdbTrailerLimit.value = config.TrailerLimit || 20;
                 Dashboard.hideLoadingMsg();
             });
         });
@@ -83,10 +140,17 @@
                 config.Region = TmdbTrailerPlugin.txtTmdbRegion.value;
                 if(TmdbTrailerPlugin.txtTmdbMaxBitrate.value === ''){
                     config.MaxBitrate = null;
-                } else{
+                } else {
                     config.MaxBitrate = TmdbTrailerPlugin.txtTmdbMaxBitrate.value; 
                 }
-                
+
+                config.EnableExtrasChannel = TmdbTrailerPlugin.chkTmdbEnableExtras.checked;
+                config.EnableTrailersChannel = TmdbTrailerPlugin.chkTmdbEnableTrailers.checked;
+                config.EnableTrailersUpcoming = TmdbTrailerPlugin.chkTmdbEnableTrailersUpcoming.checked;
+                config.EnableTrailersNowPlaying = TmdbTrailerPlugin.chkTmdbEnableTrailersNowPlaying.checked;
+                config.EnableTrailersPopular = TmdbTrailerPlugin.chkTmdbEnableTrailersPopular.checked;
+                config.EnableTrailersTopRated = TmdbTrailerPlugin.chkTmdbEnableTrailersTopRated.checked;
+                config.TrailerLimit = TmdbTrailerPlugin.txtTmdbTrailerLimit.value;
                 ApiClient.updatePluginConfiguration(TmdbTrailerPlugin.pluginUniqueId, config).then(Dashboard.processPluginConfigurationUpdateResult);
                 e.preventDefault();
             });
