@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Jellyfin.Plugin.Tmdb.Trailers.Configuration;
+using Jellyfin.Plugin.Tmdb.Trailers.Config;
 using MediaBrowser.Controller.Channels;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Channels;
@@ -12,9 +12,11 @@ using MediaBrowser.Model.Drawing;
 using MediaBrowser.Model.Dto;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.MediaInfo;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using TMDbLib.Client;
 using TMDbLib.Objects.General;
+using TMDbLib.Objects.Search;
 using YouTubeFetcher.Core.Factories;
 using YouTubeFetcher.Core.Services.Interfaces;
 
@@ -26,9 +28,10 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
     public class Channel : IChannel, IDisposable
     {
         // tmdb always returns 20 items.
-        private const decimal PageSize = 20;
+        private const int PageSize = 20;
 
         private readonly ILogger<Channel> _logger;
+        private readonly IMemoryCache _memoryCache;
 
         private readonly TMDbClient _client;
         private readonly PluginConfiguration _configuration;
@@ -38,9 +41,11 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// Initializes a new instance of the <see cref="Channel"/> class.
         /// </summary>
         /// <param name="logger">Instance of the <see cref="ILogger{Channel}"/> interface.</param>
-        public Channel(ILogger<Channel> logger)
+        /// <param name="memoryCache">Instance of the <see cref="IMemoryCache"/> interface.</param>
+        public Channel(ILogger<Channel> logger, IMemoryCache memoryCache)
         {
             _logger = logger;
+            _memoryCache = memoryCache;
 
             _configuration = TmdbTrailerPlugin.Instance.Configuration;
             _client = new TMDbClient(_configuration.ApiKey);
@@ -76,7 +81,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 {
                     ChannelMediaType.Video
                 },
-                MaxPageSize = 20
+                MaxPageSize = PageSize
             };
         }
 
@@ -96,25 +101,50 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 return GetChannelTypes();
             }
 
+            if (_memoryCache.TryGetValue(query.FolderId, out ChannelItemResult cachedValue))
+            {
+                _logger.LogDebug("Function={function} FolderId={folderId} Cache Hit", nameof(GetChannelItems), query.FolderId);
+                return cachedValue;
+            }
+
+            ChannelItemResult result = null;
+
             // Get upcoming movies.
             if (query.FolderId.Equals("upcoming", StringComparison.OrdinalIgnoreCase))
             {
-                return await GetUpcomingMoviesAsync(query, cancellationToken).ConfigureAwait(false);
+                result = await GetUpcomingMoviesAsync(query, cancellationToken).ConfigureAwait(false);
             }
 
             // Get now playing movies.
-            if (query.FolderId.Equals("nowplaying", StringComparison.OrdinalIgnoreCase))
+            else if (query.FolderId.Equals("nowplaying", StringComparison.OrdinalIgnoreCase))
             {
-                return await GetNowPlayingMoviesAsync(query, cancellationToken).ConfigureAwait(false);
+                result = await GetNowPlayingMoviesAsync(query, cancellationToken).ConfigureAwait(false);
+            }
+
+            // Get popular movies.
+            else if (query.FolderId.Equals("popular", StringComparison.OrdinalIgnoreCase))
+            {
+                result = await GetPopularMoviesAsync(query, cancellationToken).ConfigureAwait(false);
+            }
+
+            // Get top rated movies.
+            else if (query.FolderId.Equals("toprated", StringComparison.OrdinalIgnoreCase))
+            {
+                result = await GetTopRatedMoviesAsync(query, cancellationToken).ConfigureAwait(false);
             }
 
             // Get video streams for item.
-            if (int.TryParse(query.FolderId, out var movieId))
+            else if (int.TryParse(query.FolderId, out var movieId))
             {
-                return await GetStreamsAsync(movieId, cancellationToken).ConfigureAwait(false);
+                result = await GetMovieStreamsAsync(movieId, cancellationToken).ConfigureAwait(false);
             }
 
-            return new ChannelItemResult();
+            if (result != null)
+            {
+                _memoryCache.Set(query.FolderId, result);
+            }
+
+            return result ?? new ChannelItemResult();
         }
 
         /// <inheritdoc />
@@ -173,7 +203,20 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         {
             var start = startIndex ?? 0;
 
-            return (int)Math.Floor(start / PageSize);
+            return (int)Math.Floor(start / (double)PageSize);
+        }
+
+        /// <summary>
+        /// Gets the original image url.
+        /// </summary>
+        /// <param name="imagePath">The image resource path.</param>
+        /// <returns>The full image path.</returns>
+        private static string GetImageUrl(string imagePath)
+        {
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "https://image.tmdb.org/t/p/original/{0}",
+                imagePath.TrimStart('/'));
         }
 
         /// <summary>
@@ -202,9 +245,25 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                         Name = "Now Playing",
                         Type = ChannelItemType.Folder,
                         MediaType = ChannelMediaType.Video
+                    },
+                    new ChannelItemInfo
+                    {
+                        Id = "popular",
+                        FolderType = ChannelFolderType.Container,
+                        Name = "Popular",
+                        Type = ChannelItemType.Folder,
+                        MediaType = ChannelMediaType.Video
+                    },
+                    new ChannelItemInfo
+                    {
+                        Id = "toprated",
+                        FolderType = ChannelFolderType.Container,
+                        Name = "Top Rated",
+                        Type = ChannelItemType.Folder,
+                        MediaType = ChannelMediaType.Video
                     }
                 },
-                TotalRecordCount = 2
+                TotalRecordCount = 4
             };
         }
 
@@ -226,7 +285,12 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                     return null;
                 }
 
-                var format = streamingData.Value.Formats.OrderByDescending(o => o.Bitrate).First();
+                var maxBitrate = _configuration.MaxBitrate ?? int.MaxValue;
+                var format = streamingData.Value.Formats
+                    .Where(o => maxBitrate > o.Bitrate)
+                    .OrderByDescending(o => o.Bitrate)
+                    .FirstOrDefault();
+
                 var streamUrl = await _youTubeService.GetStreamUrlAsync(key, format).ConfigureAwait(false);
                 _logger.LogDebug("{function} Site={site} Key={key} Bitrate={bitrate} StreamUrl={url}", nameof(GetPlaybackUrlAsync), site, key, format.Bitrate, streamUrl);
                 return (streamUrl, format.Bitrate);
@@ -241,6 +305,42 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
             return null;
         }
 
+        /// <summary>
+        /// Create channel item result from search result.
+        /// </summary>
+        /// <param name="movies">Search container of movies.</param>
+        /// <returns>The channel item result.</returns>
+        private ChannelItemResult GetChannelItemResult(SearchContainer<SearchMovie> movies)
+        {
+            var channelItems = new List<ChannelItemInfo>();
+            foreach (var item in movies.Results)
+            {
+                var posterUrl = GetImageUrl(item.PosterPath);
+                _memoryCache.Set($"{item.Id}-poster", posterUrl, TimeSpan.FromDays(1));
+                channelItems.Add(new ChannelItemInfo
+                {
+                    Id = item.Id.ToString(CultureInfo.InvariantCulture),
+                    Name = item.Title,
+                    FolderType = ChannelFolderType.Container,
+                    Type = ChannelItemType.Folder,
+                    MediaType = ChannelMediaType.Video,
+                    ImageUrl = posterUrl
+                });
+            }
+
+            return new ChannelItemResult
+            {
+                Items = channelItems,
+                TotalRecordCount = movies.TotalResults
+            };
+        }
+
+        /// <summary>
+        /// Get upcoming movies.
+        /// </summary>
+        /// <param name="query">Channel query.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The upcoming movies.</returns>
         private async Task<ChannelItemResult> GetUpcomingMoviesAsync(InternalChannelItemQuery query, CancellationToken cancellationToken)
         {
             _logger.LogDebug(nameof(GetUpcomingMoviesAsync));
@@ -252,26 +352,15 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                     cancellationToken)
                 .ConfigureAwait(false);
 
-            var channelItems = new List<ChannelItemInfo>();
-            foreach (var item in response.Results)
-            {
-                channelItems.Add(new ChannelItemInfo
-                {
-                    Id = item.Id.ToString(CultureInfo.InvariantCulture),
-                    Name = item.Title,
-                    FolderType = ChannelFolderType.Container,
-                    Type = ChannelItemType.Folder,
-                    MediaType = ChannelMediaType.Video
-                });
-            }
-
-            return new ChannelItemResult
-            {
-                Items = channelItems,
-                TotalRecordCount = response.TotalResults
-            };
+            return GetChannelItemResult(response);
         }
 
+        /// <summary>
+        /// Get now playing movies.
+        /// </summary>
+        /// <param name="query">Channel query.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The now playing movies.</returns>
         private async Task<ChannelItemResult> GetNowPlayingMoviesAsync(InternalChannelItemQuery query, CancellationToken cancellationToken)
         {
             _logger.LogDebug(nameof(GetNowPlayingMoviesAsync));
@@ -283,36 +372,63 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                     cancellationToken)
                 .ConfigureAwait(false);
 
-            var channelItems = new List<ChannelItemInfo>();
-            foreach (var item in response.Results)
-            {
-                channelItems.Add(new ChannelItemInfo
-                {
-                    Id = item.Id.ToString(CultureInfo.InvariantCulture),
-                    Name = item.Title,
-                    FolderType = ChannelFolderType.Container,
-                    Type = ChannelItemType.Folder,
-                    MediaType = ChannelMediaType.Video
-                });
-            }
-
-            return new ChannelItemResult
-            {
-                Items = channelItems,
-                TotalRecordCount = response.TotalResults
-            };
+            return GetChannelItemResult(response);
         }
 
-        private async Task<ChannelItemResult> GetStreamsAsync(int id, CancellationToken cancellationToken)
+        /// <summary>
+        /// Get popular movies.
+        /// </summary>
+        /// <param name="query">Channel query.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The popular movies.</returns>
+        private async Task<ChannelItemResult> GetPopularMoviesAsync(InternalChannelItemQuery query, CancellationToken cancellationToken)
         {
+            _logger.LogDebug(nameof(GetPopularMoviesAsync));
+            var pageNumber = GetPageNumber(query.StartIndex);
+            var response = await _client.GetMoviePopularListAsync(
+                    _configuration.Language,
+                    pageNumber,
+                    _configuration.Region,
+                    cancellationToken)
+                .ConfigureAwait(false);
+
+            return GetChannelItemResult(response);
+        }
+
+        /// <summary>
+        /// Get top rated movies.
+        /// </summary>
+        /// <param name="query">Channel query.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The top rated movies.</returns>
+        private async Task<ChannelItemResult> GetTopRatedMoviesAsync(InternalChannelItemQuery query, CancellationToken cancellationToken)
+        {
+            _logger.LogDebug(nameof(GetTopRatedMoviesAsync));
+            var pageNumber = GetPageNumber(query.StartIndex);
+            var response = await _client.GetMovieTopRatedListAsync(
+                    _configuration.Language,
+                    pageNumber,
+                    _configuration.Region,
+                    cancellationToken)
+                .ConfigureAwait(false);
+
+            return GetChannelItemResult(response);
+        }
+
+        /// <summary>
+        /// Get available movie streams.
+        /// </summary>
+        /// <param name="id">Movie id.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The movie streams.</returns>
+        private async Task<ChannelItemResult> GetMovieStreamsAsync(int id, CancellationToken cancellationToken)
+        {
+            _memoryCache.TryGetValue($"{id}-poster", out string posterUrl);
             var response = await _client.GetMovieVideosAsync(id, cancellationToken).ConfigureAwait(false);
-            _logger.LogDebug("{function} Response={@response}", nameof(GetStreamsAsync), response);
+            _logger.LogDebug("{function} Response={@response}", nameof(GetMovieStreamsAsync), response);
 
             var streamTasks = new List<Task<ChannelItemInfo>>(response.Results.Count);
-            foreach (var item in response.Results)
-            {
-                streamTasks.Add(GetChannelItemInfoAsync(item));
-            }
+            streamTasks.AddRange(response.Results.Select(GetChannelItemInfoAsync));
 
             await Task.WhenAll(streamTasks).ConfigureAwait(false);
             var channelItems = new List<ChannelItemInfo>(response.Results.Count);
@@ -322,6 +438,11 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 if (channelItemInfo == null)
                 {
                     continue;
+                }
+
+                if (!string.IsNullOrEmpty(posterUrl))
+                {
+                    channelItemInfo.ImageUrl = posterUrl;
                 }
 
                 channelItems.Add(channelItemInfo);
@@ -334,6 +455,11 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
             };
         }
 
+        /// <summary>
+        /// Get stream information from video item.
+        /// </summary>
+        /// <param name="item">Video item.</param>
+        /// <returns>Stream information.</returns>
         private async Task<ChannelItemInfo> GetChannelItemInfoAsync(Video item)
         {
             var response = await GetPlaybackUrlAsync(item.Site, item.Key).ConfigureAwait(false);
@@ -345,15 +471,15 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
             return new ChannelItemInfo
             {
                 Id = item.Id,
-                Name = Name,
-                OriginalTitle = Name,
+                Name = item.Name,
+                OriginalTitle = item.Name,
                 Type = ChannelItemType.Media,
                 MediaType = ChannelMediaType.Video,
                 MediaSources = new List<MediaSourceInfo>
                 {
                     new MediaSourceInfo
                     {
-                        Name = Name,
+                        Name = item.Name,
                         Path = response.Value.Url,
                         Bitrate = response.Value.Bitrate,
                         Protocol = MediaProtocol.Http,

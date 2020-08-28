@@ -8,8 +8,6 @@ This plugin is built with .NET Core to watch trailers sourced from TMDb
 TODO:
 - Some trailers will fail to play for unknown reasons
 - Implement Vimeo playback
-- Implement Culture selection
-- Implement quality limit
 
 ## Build Process
 

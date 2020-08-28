@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TMDb Trailers</title>
+</head>
+<body>
+<div data-role="page" class="page type-interior pluginConfigurationPage esqConfigurationPage">
+    <div data-role="content">
+        <div class="content-primary">
+            <form class="esqConfigurationForm">
+                <div class="verticalSection verticalSection-extrabottompadding">
+                    <div class="sectionTitleContainer flex align-items-center">
+                        <h2 class="sectionTitle">TMDb Trailer Settings:</h2>
+                        <a is="emby-button" class="raised button-alt headerHelpButton" target="_blank" href="https://github.com/crobibero/jellyfin-plugin-tmdb-trailers">${Help}</a>
+                    </div>
+                    <div class="verticalSection verticalSection-extrabottompadding">
+                        <div class="inputContainer">
+                            <input is="emby-input" type="text" id="txtTmdbLanguage" label="Language:" />
+                            <div class="fieldDescription">
+                                Pass a ISO 639-1 value to display translated data for the fields that support it.
+                                minLength: 2
+                                pattern: ([a-z]{2})-([A-Z]{2})
+                                default: en-US
+                                <a is="emby-button" class="raised button-alt" target="_blank" href="https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes">Language Code Reference</a>
+                            </div>
+                        </div>
+                        <div class="inputContainer">
+                            <input is="emby-input" type="text" id="txtTmdbRegion" label="Region:" />
+                            <div class="fieldDescription">
+                                Specify a ISO 3166-1 code to filter release dates. Must be uppercase.
+                                pattern: ^[A-Z]{2}$
+                                <a is="emby-button" class="raised button-alt" target="_blank" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">Language Code Reference</a>
+                            </div>
+                        </div>
+                        <div class="inputContainer">
+                            <input is="emby-input" type="text" id="txtTmdbMaxBitrate" label="Max Bitrate:" />
+                            <div class="fieldDescription">
+                                The maximum bitrate trailer to play
+                                default: null
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button is="emby-button" type="submit" data-theme="b" class="raised button-submit block">
+                            <span>${ButtonSave}</span>
+                        </button>
+                        <button is="emby-button" type="button" class="raised button-cancel block btnCancel" onclick="history.back();">
+                            <span>${ButtonCancel}</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        var TmdbTrailerPlugin = {
+            pluginUniqueId: "69104C31-D23F-4040-B99C-8913C09751D6",
+
+            txtTmdbLanguage: document.getElementById("txtTmdbLanguage"),
+            txtTmdbRegion: document.getElementById("txtTmdbRegion"),
+            txtTmdbMaxBitrate: document.getElementById("txtTmdbMaxBitrate")
+        };
+
+        window.addEventListener("pageshow", function (_) {
+            Dashboard.showLoadingMsg();
+
+            ApiClient.getPluginConfiguration(TmdbTrailerPlugin.pluginUniqueId).then(function (config) {
+                TmdbTrailerPlugin.txtTmdbLanguage.value = config.Language || '';
+                TmdbTrailerPlugin.txtTmdbRegion.value = config.Region || '';
+                TmdbTrailerPlugin.txtTmdbMaxBitrate.value = config.MaxBitrate || '';
+                Dashboard.hideLoadingMsg();
+            });
+        });
+
+        document.querySelector(".esqConfigurationForm").addEventListener("submit", function(e){
+            Dashboard.showLoadingMsg();
+
+            ApiClient.getPluginConfiguration(TmdbTrailerPlugin.pluginUniqueId).then(function (config) {
+                config.Language = TmdbTrailerPlugin.txtTmdbLanguage.value;
+                config.Region = TmdbTrailerPlugin.txtTmdbRegion.value;
+                if(TmdbTrailerPlugin.txtTmdbMaxBitrate.value === ''){
+                    config.MaxBitrate = null;
+                } else{
+                    config.MaxBitrate = TmdbTrailerPlugin.txtTmdbMaxBitrate.value; 
+                }
+                
+                ApiClient.updatePluginConfiguration(TmdbTrailerPlugin.pluginUniqueId, config).then(Dashboard.processPluginConfigurationUpdateResult);
+                e.preventDefault();
+            });
+
+            // Disable default form submission
+            return false;
+        });
+    </script>
+</div>
+</body>
+</html>

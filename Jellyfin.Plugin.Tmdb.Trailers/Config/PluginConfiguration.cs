@@ -1,8 +1,6 @@
-﻿#pragma warning disable CA1819
+﻿using MediaBrowser.Model.Plugins;
 
-using MediaBrowser.Model.Plugins;
-
-namespace Jellyfin.Plugin.Tmdb.Trailers.Configuration
+namespace Jellyfin.Plugin.Tmdb.Trailers.Config
 {
     /// <inheritdoc />
     public class PluginConfiguration : BasePluginConfiguration
@@ -25,5 +23,10 @@ namespace Jellyfin.Plugin.Tmdb.Trailers.Configuration
         /// Specify a ISO 3166-1 code to filter release dates. Must be uppercase.
         /// </summary>
         public string Region { get; set; }
+
+        /// <summary>
+        /// Gets or sets the max bitrate.
+        /// </summary>
+        public int? MaxBitrate { get; set; }
     }
 }

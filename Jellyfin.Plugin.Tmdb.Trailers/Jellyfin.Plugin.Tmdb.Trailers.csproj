@@ -28,6 +28,8 @@
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="Images\tmdb-thumb.png" />
+      <None Remove="Configuration\configPage.html" />
+      <EmbeddedResource Include="Config\configPage.html" />
     </ItemGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
