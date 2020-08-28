@@ -25,7 +25,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
     /// <summary>
     /// Trailers Channel.
     /// </summary>
-    public class Channel : IChannel, IDisposable
+    public class Channel : IChannel, IDisposable, IDisableMediaSourceDisplay
     {
         // tmdb always returns 20 items.
         private const int PageSize = 20;
