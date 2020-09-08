@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Controller.Channels;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Channels;
+using MediaBrowser.Model.Dto;
 using MediaBrowser.Model.Entities;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -15,7 +17,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers.Channels
     /// <summary>
     /// Trailers Channel.
     /// </summary>
-    public class TmdbExtrasChannel : IChannel, IDisableMediaSourceDisplay, IDisposable
+    public class TmdbExtrasChannel : IChannel, IDisableMediaSourceDisplay, IDisposable, IRequiresMediaInfoCallback
     {
         private readonly ILogger<TmdbExtrasChannel> _logger;
         private readonly TmdbManager _tmdbManager;
@@ -89,6 +91,13 @@ namespace Jellyfin.Plugin.Tmdb.Trailers.Channels
         public IEnumerable<ImageType> GetSupportedChannelImages()
         {
             return _tmdbManager.GetSupportedChannelImages();
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<MediaSourceInfo>> GetChannelItemMediaInfo(string id, CancellationToken cancellationToken)
+        {
+            var response = await _tmdbManager.GetMediaSource(id).ConfigureAwait(false);
+            return response == null ? Enumerable.Empty<MediaSourceInfo>() : new[] { response };
         }
 
         /// <inheritdoc />

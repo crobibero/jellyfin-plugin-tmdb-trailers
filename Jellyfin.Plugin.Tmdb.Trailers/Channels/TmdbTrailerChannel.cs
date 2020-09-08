@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Controller.Channels;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Channels;
+using MediaBrowser.Model.Dto;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Tasks;
 using Microsoft.Extensions.Caching.Memory;
@@ -16,7 +18,8 @@ namespace Jellyfin.Plugin.Tmdb.Trailers.Channels
     /// <summary>
     /// Trailers Channel.
     /// </summary>
-    public class TmdbTrailerChannel : IChannel, IDisableMediaSourceDisplay, IDisposable, IScheduledTask, ISupportsLatestMedia
+    public class TmdbTrailerChannel
+        : IChannel, IDisableMediaSourceDisplay, IDisposable, IScheduledTask, ISupportsLatestMedia, IRequiresMediaInfoCallback
     {
         private readonly ILogger<TmdbTrailerChannel> _logger;
         private readonly TmdbManager _tmdbManager;
@@ -129,6 +132,13 @@ namespace Jellyfin.Plugin.Tmdb.Trailers.Channels
         {
             // Implementing ISupportsLatestMedia is currently the only way to "automatically" refresh the library.
             throw new NotImplementedException();
+        }
+
+        /// <inheritdoc />
+        public async Task<IEnumerable<MediaSourceInfo>> GetChannelItemMediaInfo(string id, CancellationToken cancellationToken)
+        {
+            var response = await _tmdbManager.GetMediaSource(id).ConfigureAwait(false);
+            return response == null ? Enumerable.Empty<MediaSourceInfo>() : new[] { response };
         }
 
         /// <inheritdoc />

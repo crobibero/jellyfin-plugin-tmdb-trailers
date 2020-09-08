@@ -1,18 +1,16 @@
 ---
 name: "TMDb Trailers"
 guid: "69104C31-D23F-4040-B99C-8913C09751D6"
-version: "3.0.0.0"
+version: "4.0.0.0"
 targetAbi: "10.6.0.0"
 owner: "crobibero"
 overview: "Watch trailers from TMDb"
 description: >
-  Watch trailers from TMDB
+  Watch trailers from TMDb
 category: "Channels"
 artifacts:
 - "Jellyfin.Plugin.Tmdb.Trailers.dll"
 - "TMDbLib.dll"
 - "YouTubeFetcher.Core.dll"
 changelog: >
-  Add configuration
-  Add additional video sources
-  Actually add item as trailer
+  Only get stream url when requested

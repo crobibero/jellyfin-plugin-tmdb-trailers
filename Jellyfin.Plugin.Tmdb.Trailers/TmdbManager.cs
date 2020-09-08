@@ -33,6 +33,8 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// </summary>
         public const int PageSize = 20;
 
+        private readonly TimeSpan _defaultCacheTime = TimeSpan.FromDays(1);
+
         private readonly ILogger<TmdbManager> _logger;
         private readonly IMemoryCache _memoryCache;
 
@@ -110,12 +112,12 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 else if (int.TryParse(query.FolderId, out var movieId))
                 {
                     var videos = await GetMovieStreamsAsync(movieId, cancellationToken).ConfigureAwait(false);
-                    result = await GetVideoItem(videos, false).ConfigureAwait(false);
+                    result = GetVideoItem(videos, false);
                 }
 
                 if (result != null)
                 {
-                    _memoryCache.Set(query.FolderId, result, TimeSpan.FromDays(1));
+                    _memoryCache.Set(query.FolderId, result, _defaultCacheTime);
                 }
 
                 return result ?? new ChannelItemResult();
@@ -147,7 +149,6 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
 
                 var channelItemsResult = new ChannelItemResult();
                 var movieTasks = new List<Task<ResultContainer<Video>>>();
-                var channelTasks = new List<Task<ChannelItemResult>>();
 
                 if (TmdbTrailerPlugin.Instance.Configuration.EnableTrailersUpcoming)
                 {
@@ -177,14 +178,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 foreach (var task in movieTasks)
                 {
                     var result = await task.ConfigureAwait(false);
-                    channelTasks.Add(GetVideoItem(result, true));
-                }
-
-                await Task.WhenAll(channelTasks).ConfigureAwait(false);
-                foreach (var task in channelTasks)
-                {
-                    var videoItems = await task.ConfigureAwait(false);
-                    channelItemsResult.Items.AddRange(videoItems.Items);
+                    channelItemsResult.Items.AddRange(GetVideoItem(result, true).Items);
                 }
 
                 _memoryCache.Set("all-trailer", channelItemsResult);
@@ -404,8 +398,9 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 foreach (var item in movies)
                 {
                     var posterUrl = GetImageUrl(item.PosterPath);
-                    _memoryCache.Set($"{item.Id}-poster", posterUrl, TimeSpan.FromDays(1));
-                    _memoryCache.Set($"{item.Id}-trailer", trailerType, TimeSpan.FromDays(1));
+                    _memoryCache.Set($"{item.Id}-item", item, _defaultCacheTime);
+                    _memoryCache.Set($"{item.Id}-poster", posterUrl, _defaultCacheTime);
+                    _memoryCache.Set($"{item.Id}-trailer", trailerType, _defaultCacheTime);
                     channelItems.Add(new ChannelItemInfo
                     {
                         Id = item.Id.ToString(CultureInfo.InvariantCulture),
@@ -611,17 +606,13 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
             }
         }
 
-        private async Task<ChannelItemResult> GetVideoItem(ResultContainer<Video> videoResult, bool trailerChannel)
+        private ChannelItemResult GetVideoItem(ResultContainer<Video> videoResult, bool trailerChannel)
         {
             try
             {
                 _logger.LogDebug("{function} VideoResult={@videoResult}", nameof(GetVideoItem), videoResult);
-                var streamTasks = new List<Task<ChannelItemInfo>>(videoResult.Results.Count);
-                streamTasks.AddRange(videoResult.Results.Select(o => GetVideoChannelItem(videoResult.Id, o, trailerChannel)));
-
-                await Task.WhenAll(streamTasks).ConfigureAwait(false);
                 var channelItems = new List<ChannelItemInfo>(videoResult.Results.Count);
-                foreach (var task in streamTasks)
+                foreach (var video in videoResult.Results)
                 {
                     // Only add first trailer
                     if (trailerChannel && channelItems.Count != 0)
@@ -629,7 +620,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                         break;
                     }
 
-                    var channelItemInfo = await task.ConfigureAwait(false);
+                    var channelItemInfo = GetVideoChannelItem(videoResult.Id, video, trailerChannel);
                     if (channelItemInfo == null)
                     {
                         continue;
@@ -651,7 +642,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
             }
         }
 
-        private async Task<ChannelItemInfo> GetVideoChannelItem(int id, Video video, bool trailerChannel)
+        private ChannelItemInfo GetVideoChannelItem(int id, Video video, bool trailerChannel)
         {
             try
             {
@@ -664,9 +655,11 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 _logger.LogDebug("{function} Id={id} Video={@video}", nameof(GetVideoChannelItem), id, video);
                 _memoryCache.TryGetValue($"{id}-poster", out string posterUrl);
                 _memoryCache.TryGetValue($"{id}-trailer", out TrailerType? trailerType);
+                _memoryCache.Set($"{video.Id}-video", video, _defaultCacheTime);
+
                 trailerType ??= TrailerType.Archive;
 
-                var channelItemInfo = await GetChannelItemInfoAsync(video).ConfigureAwait(false);
+                var channelItemInfo = GetChannelItemInfo(video);
                 if (channelItemInfo == null)
                 {
                     return null;
@@ -707,40 +700,60 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// </summary>
         /// <param name="item">Video item.</param>
         /// <returns>Stream information.</returns>
-        private async Task<ChannelItemInfo> GetChannelItemInfoAsync(Video item)
+        private ChannelItemInfo GetChannelItemInfo(Video item)
         {
             try
             {
-                var response = await GetPlaybackUrlAsync(item.Site, item.Key).ConfigureAwait(false);
-                if (response == null)
-                {
-                    return null;
-                }
-
                 return new ChannelItemInfo
                 {
                     Id = item.Id,
                     Name = item.Name,
                     OriginalTitle = item.Name,
                     Type = ChannelItemType.Media,
-                    MediaType = ChannelMediaType.Video,
-                    MediaSources = new List<MediaSourceInfo>
-                    {
-                        new MediaSourceInfo
-                        {
-                            Name = item.Name,
-                            Path = response.Value.Url,
-                            Bitrate = response.Value.Bitrate,
-                            Protocol = MediaProtocol.Http,
-                            Id = item.Id,
-                            IsRemote = true
-                        }
-                    }
+                    MediaType = ChannelMediaType.Video
                 };
             }
             catch (Exception e)
             {
-                _logger.LogError(e, nameof(GetChannelItemInfoAsync));
+                _logger.LogError(e, nameof(GetChannelItemInfo));
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Get media source from video.
+        /// </summary>
+        /// <param name="id">video id.</param>
+        /// <returns>Media source info.</returns>
+        public async Task<MediaSourceInfo> GetMediaSource(string id)
+        {
+            try
+            {
+                _memoryCache.TryGetValue($"{id}-video", out Video video);
+                if (video == null)
+                {
+                    return null;
+                }
+
+                var response = await GetPlaybackUrlAsync(video.Site, video.Key).ConfigureAwait(false);
+                if (response == null)
+                {
+                    return null;
+                }
+
+                return new MediaSourceInfo
+                {
+                    Name = video.Name,
+                    Path = response.Value.Url,
+                    Bitrate = response.Value.Bitrate,
+                    Protocol = MediaProtocol.Http,
+                    Id = video.Id,
+                    IsRemote = true
+                };
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, nameof(GetMediaSource));
                 throw;
             }
         }
