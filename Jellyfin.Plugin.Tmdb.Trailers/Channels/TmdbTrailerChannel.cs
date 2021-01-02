@@ -10,7 +10,6 @@ using MediaBrowser.Model.Channels;
 using MediaBrowser.Model.Dto;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Tasks;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.Tmdb.Trailers.Channels
@@ -27,13 +26,12 @@ namespace Jellyfin.Plugin.Tmdb.Trailers.Channels
         /// <summary>
         /// Initializes a new instance of the <see cref="TmdbTrailerChannel"/> class.
         /// </summary>
-        /// <param name="loggerFactory">Instance of the <see cref="ILoggerFactory"/> interface.</param>
-        /// <param name="memoryCache">Instance of the <see cref="IMemoryCache"/> interface.</param>
-        public TmdbTrailerChannel(ILoggerFactory loggerFactory, IMemoryCache memoryCache)
+        /// <param name="logger">Instance of the <see cref="ILogger{TmdbTrailerChannel}"/> interface..</param>
+        /// <param name="tmdbManager">Instance of the <see cref="TmdbManager"/>.</param>
+        public TmdbTrailerChannel(ILogger<TmdbTrailerChannel> logger, TmdbManager tmdbManager)
         {
-            _logger = loggerFactory.CreateLogger<TmdbTrailerChannel>();
-            _logger.LogDebug(nameof(TmdbTrailerChannel));
-            _tmdbManager = new TmdbManager(loggerFactory, memoryCache);
+            _logger = logger;
+            _tmdbManager = tmdbManager;
         }
 
         /// <summary>

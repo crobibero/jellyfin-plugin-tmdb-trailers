@@ -117,7 +117,7 @@
         window.addEventListener("pageshow", function (_) {
             Dashboard.showLoadingMsg();
 
-            ApiClient.getPluginConfiguration(TmdbTrailerPlugin.pluginUniqueId).then(function (config) {
+            window.ApiClient.getPluginConfiguration(TmdbTrailerPlugin.pluginUniqueId).then(function (config) {
                 TmdbTrailerPlugin.txtTmdbLanguage.value = config.Language || '';
                 TmdbTrailerPlugin.txtTmdbRegion.value = config.Region || '';
                 TmdbTrailerPlugin.txtTmdbMaxBitrate.value = config.MaxBitrate || '';
@@ -135,7 +135,7 @@
         document.querySelector(".esqConfigurationForm").addEventListener("submit", function(e){
             Dashboard.showLoadingMsg();
 
-            ApiClient.getPluginConfiguration(TmdbTrailerPlugin.pluginUniqueId).then(function (config) {
+            window.ApiClient.getPluginConfiguration(TmdbTrailerPlugin.pluginUniqueId).then(function (config) {
                 config.Language = TmdbTrailerPlugin.txtTmdbLanguage.value;
                 config.Region = TmdbTrailerPlugin.txtTmdbRegion.value;
                 if(TmdbTrailerPlugin.txtTmdbMaxBitrate.value === ''){
@@ -151,7 +151,7 @@
                 config.EnableTrailersPopular = TmdbTrailerPlugin.chkTmdbEnableTrailersPopular.checked;
                 config.EnableTrailersTopRated = TmdbTrailerPlugin.chkTmdbEnableTrailersTopRated.checked;
                 config.TrailerLimit = TmdbTrailerPlugin.txtTmdbTrailerLimit.value;
-                ApiClient.updatePluginConfiguration(TmdbTrailerPlugin.pluginUniqueId, config).then(Dashboard.processPluginConfigurationUpdateResult);
+                window.ApiClient.updatePluginConfiguration(TmdbTrailerPlugin.pluginUniqueId, config).then(Dashboard.processPluginConfigurationUpdateResult);
                 e.preventDefault();
             });
 

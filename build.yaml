@@ -1,8 +1,8 @@
 ---
 name: "TMDb Trailers"
 guid: "69104C31-D23F-4040-B99C-8913C09751D6"
-version: "4.0.0.0"
-targetAbi: "10.6.0.0"
+version: "5.0.0.0"
+targetAbi: "10.7.0.0"
 owner: "crobibero"
 overview: "Watch trailers from TMDb"
 description: >
