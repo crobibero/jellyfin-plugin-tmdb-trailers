@@ -203,7 +203,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 _logger.LogDebug(nameof(GetChannelImage));
                 if (type == ImageType.Thumb)
                 {
-                    var name = GetType().Namespace + ".Images.tmdb-thumb.png";
+                    var name = GetType().Namespace + ".Images.jellyfin-plugin-tmdb.png";
                     var response = new DynamicImageResponse
                     {
                         Format = ImageFormat.Png,

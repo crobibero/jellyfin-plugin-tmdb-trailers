@@ -6,6 +6,7 @@ targetAbi: "10.7.0.0"
 framework: "net5.0"
 owner: "crobibero"
 overview: "Watch trailers from TMDb"
+image: "Jellyfin.Plugin.Tmdb.Trailers/Images/jellyfin-plugin-tmdb.png"
 description: >
   Watch trailers from TMDb
 category: "Channels"

@@ -26,9 +26,8 @@
       <None Remove="tmdb.png" />
     </ItemGroup>
     <ItemGroup>
-      <EmbeddedResource Include="Images\tmdb-thumb.png" />
-      <None Remove="Configuration\configPage.html" />
       <EmbeddedResource Include="Config\configPage.html" />
+      <EmbeddedResource Include="Images\jellyfin-plugin-tmdb.png" />
     </ItemGroup>
 
     <PropertyGroup>
