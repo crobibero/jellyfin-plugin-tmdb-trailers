@@ -75,7 +75,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers.Channels
         /// <inheritdoc />
         public Task<ChannelItemResult> GetChannelItems(InternalChannelItemQuery query, CancellationToken cancellationToken)
         {
-            _logger.LogDebug("{function} Query={@query}", nameof(GetChannelItems), query);
+            _logger.LogDebug("{Function} Query={@Query}", nameof(GetChannelItems), query);
             return _tmdbManager.GetChannelItems(query, cancellationToken);
         }
 

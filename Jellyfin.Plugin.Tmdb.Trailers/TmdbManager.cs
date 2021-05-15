@@ -76,7 +76,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
 
                 if (_memoryCache.TryGetValue(query.FolderId, out ChannelItemResult cachedValue))
                 {
-                    _logger.LogDebug("Function={function} FolderId={folderId} Cache Hit", nameof(GetChannelItems), query.FolderId);
+                    _logger.LogDebug("Function={Function} FolderId={FolderId} Cache Hit", nameof(GetChannelItems), query.FolderId);
                     return cachedValue;
                 }
 
@@ -141,7 +141,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
             {
                 if (!ignoreCache && _memoryCache.TryGetValue("all-trailer", out ChannelItemResult cachedValue))
                 {
-                    _logger.LogDebug("Function={function} Cache Hit", nameof(GetAllChannelItems));
+                    _logger.LogDebug("Function={Function} Cache Hit", nameof(GetAllChannelItems));
                     return cachedValue;
                 }
 
@@ -366,13 +366,13 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                         .FirstOrDefault();
 
                     var streamUrl = await _youTubeService.GetStreamUrlAsync(key, format).ConfigureAwait(false);
-                    _logger.LogDebug("{function} Site={site} Key={key} Bitrate={bitrate} StreamUrl={url}", nameof(GetPlaybackUrlAsync), site, key, format.Bitrate, streamUrl);
+                    _logger.LogDebug("{Function} Site={Site} Key={Key} Bitrate={Bitrate} StreamUrl={Url}", nameof(GetPlaybackUrlAsync), site, key, format.Bitrate, streamUrl);
                     return (streamUrl, format.Bitrate);
                 }
 
                 if (site.Equals("vimeo", StringComparison.OrdinalIgnoreCase))
                 {
-                    _logger.LogDebug("{function} Site={site} Key={key} is not implemented.", nameof(GetPlaybackUrlAsync), site, key);
+                    _logger.LogDebug("{Function} Site={Site} Key={Key} is not implemented", nameof(GetPlaybackUrlAsync), site, key);
                 }
 
                 return null;
@@ -594,9 +594,9 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         {
             try
             {
-                _logger.LogDebug("{function} Id={id}", nameof(GetMovieStreamsAsync), id);
+                _logger.LogDebug("{Function} Id={Id}", nameof(GetMovieStreamsAsync), id);
                 var response = await _client.GetMovieVideosAsync(id, cancellationToken).ConfigureAwait(false);
-                _logger.LogDebug("{function} Response={@response}", nameof(GetMovieStreamsAsync), response);
+                _logger.LogDebug("{Function} Response={@Response}", nameof(GetMovieStreamsAsync), response);
                 return response;
             }
             catch (Exception e)
@@ -610,7 +610,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         {
             try
             {
-                _logger.LogDebug("{function} VideoResult={@videoResult}", nameof(GetVideoItem), videoResult);
+                _logger.LogDebug("{Function} VideoResult={@VideoResult}", nameof(GetVideoItem), videoResult);
                 var channelItems = new List<ChannelItemInfo>(videoResult.Results.Count);
                 foreach (var video in videoResult.Results)
                 {
@@ -652,7 +652,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                     return null;
                 }
 
-                _logger.LogDebug("{function} Id={id} Video={@video}", nameof(GetVideoChannelItem), id, video);
+                _logger.LogDebug("{Function} Id={Id} Video={@Video}", nameof(GetVideoChannelItem), id, video);
                 _memoryCache.TryGetValue($"{id}-poster", out string posterUrl);
                 _memoryCache.TryGetValue($"{id}-trailer", out TrailerType? trailerType);
                 _memoryCache.Set($"{video.Id}-video", video, _defaultCacheTime);
