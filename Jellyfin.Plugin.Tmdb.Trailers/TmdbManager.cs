@@ -665,6 +665,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                     return null;
                 }
 
+                channelItemInfo.Name = video.Name;
                 if (!string.IsNullOrEmpty(posterUrl))
                 {
                     channelItemInfo.ImageUrl = posterUrl;
