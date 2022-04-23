@@ -352,15 +352,12 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// <returns>Video playback url.</returns>
         private async Task<(string Url, int Bitrate)?> GetPlaybackUrlAsync(string site, string key)
         {
-            _logger.LogDebug("EDW EIMASTE: " + site);
             try
             {
                 if (site.Equals("youtube", StringComparison.OrdinalIgnoreCase))
                 {
                     var streamingData = await _youTubeService.GetAllVideosAsync("https://www.youtube.com/watch?v=" + key);
                     var maxResolution = streamingData.First(i => i.AudioBitrate == streamingData.Max(j => j.AudioBitrate));
-
-                    _logger.LogDebug("ANALYSOULA: " + streamingData.Max(j => j.AudioBitrate));
 
                     // Invalid video.
                     if (streamingData == null)
@@ -771,7 +768,6 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// <returns>Media source info.</returns>
         public IEnumerable<IntroInfo> Get()
         {
-            _logger.LogDebug("VideoPath: " + _appPaths.CachePath + "/tmdb-trailers/sample_video.mp4");
             yield return new IntroInfo
             {
                 Path = _appPaths.CachePath + "/tmdb-trailers/sample_video.mp4"
