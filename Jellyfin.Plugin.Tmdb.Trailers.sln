@@ -1,16 +1,49 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jellyfin.Plugin.Tmdb.Trailers", "Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers.csproj", "{0353F378-2FA1-491C-85DB-F123B1BF7DDD}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32414.318
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jellyfin.Plugin.Tmdb.Trailers", "Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers.csproj", "{0353F378-2FA1-491C-85DB-F123B1BF7DDD}"
+EndProject
+Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "jellyfin", "..\..\Installations\Applications\JellyfinServer\Server\jellyfin.exe", "{A4570E5D-050D-42D6-8D76-A5EBB14855D3}"
+	ProjectSection(DebuggerProjectSystem) = preProject
+		PortSupplier = 00000000-0000-0000-0000-000000000000
+		Executable = D:\Installations\Applications\JellyfinServer\Server\jellyfin.exe
+		RemoteMachine = DIMI-GLAPTOP-22
+		StartingDirectory = D:\Installations\Applications\JellyfinServer\Server
+		Environment = Default
+		LaunchingEngine = 00000000-0000-0000-0000-000000000000
+		UseLegacyDebugEngines = No
+		LaunchSQLEngine = No
+		AttachLaunchAction = No
+		IORedirection = Auto
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0353F378-2FA1-491C-85DB-F123B1BF7DDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0353F378-2FA1-491C-85DB-F123B1BF7DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0353F378-2FA1-491C-85DB-F123B1BF7DDD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0353F378-2FA1-491C-85DB-F123B1BF7DDD}.Debug|x64.Build.0 = Debug|Any CPU
 		{0353F378-2FA1-491C-85DB-F123B1BF7DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0353F378-2FA1-491C-85DB-F123B1BF7DDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0353F378-2FA1-491C-85DB-F123B1BF7DDD}.Release|x64.ActiveCfg = Release|Any CPU
+		{0353F378-2FA1-491C-85DB-F123B1BF7DDD}.Release|x64.Build.0 = Release|Any CPU
+		{A4570E5D-050D-42D6-8D76-A5EBB14855D3}.Debug|Any CPU.ActiveCfg = Release|x64
+		{A4570E5D-050D-42D6-8D76-A5EBB14855D3}.Debug|x64.ActiveCfg = Release|x64
+		{A4570E5D-050D-42D6-8D76-A5EBB14855D3}.Release|Any CPU.ActiveCfg = Release|x64
+		{A4570E5D-050D-42D6-8D76-A5EBB14855D3}.Release|x64.ActiveCfg = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FF4E1155-5080-4584-8E0E-E37C8C5EC82A}
 	EndGlobalSection
 EndGlobal

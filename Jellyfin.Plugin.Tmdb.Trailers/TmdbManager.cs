@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.Tmdb.Trailers.Config;
+using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller.Channels;
+using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Channels;
 using MediaBrowser.Model.Drawing;
@@ -17,8 +19,8 @@ using Microsoft.Extensions.Logging;
 using TMDbLib.Client;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Search;
-using YouTubeFetcher.Core.Factories;
-using YouTubeFetcher.Core.Services.Interfaces;
+using VideoLibrary;
+using Video = TMDbLib.Objects.General.Video;
 
 namespace Jellyfin.Plugin.Tmdb.Trailers
 {
@@ -37,24 +39,27 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
 
         private readonly ILogger<TmdbManager> _logger;
         private readonly IMemoryCache _memoryCache;
+        private readonly IApplicationPaths _appPaths;
 
         private readonly TMDbClient _client;
         private readonly PluginConfiguration _configuration;
-        private readonly IYouTubeService _youTubeService;
+        private readonly YouTube _youTubeService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TmdbManager"/> class.
         /// </summary>
+        /// <param name="applicationPaths">Instance of the <see cref="IApplicationPaths"/> interface.</param>
         /// <param name="loggerFactory">Instance of the <see cref="ILoggerFactory"/> interface.</param>
         /// <param name="memoryCache">Instance of the <see cref="IMemoryCache"/> interface.</param>
-        public TmdbManager(ILoggerFactory loggerFactory, IMemoryCache memoryCache)
+        public TmdbManager(IApplicationPaths applicationPaths, ILoggerFactory loggerFactory, IMemoryCache memoryCache)
         {
             _logger = loggerFactory.CreateLogger<TmdbManager>();
             _memoryCache = memoryCache;
+            _appPaths = applicationPaths;
 
             _configuration = TmdbTrailerPlugin.Instance.Configuration;
             _client = new TMDbClient(_configuration.ApiKey);
-            _youTubeService = new YouTubeServiceFactory().Create();
+            _youTubeService = YouTube.Default;
         }
 
         /// <summary>
@@ -347,27 +352,28 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// <returns>Video playback url.</returns>
         private async Task<(string Url, int Bitrate)?> GetPlaybackUrlAsync(string site, string key)
         {
+            _logger.LogDebug("EDW EIMASTE: " + site);
             try
             {
                 if (site.Equals("youtube", StringComparison.OrdinalIgnoreCase))
                 {
-                    var streamingData = await _youTubeService.GetStreamingDataAsync(key).ConfigureAwait(false);
+                    var streamingData = await _youTubeService.GetAllVideosAsync("https://www.youtube.com/watch?v=" + key);
+                    var maxResolution = streamingData.First(i => i.AudioBitrate == streamingData.Max(j => j.AudioBitrate));
+
+                    _logger.LogDebug("ANALYSOULA: " + streamingData.Max(j => j.AudioBitrate));
 
                     // Invalid video.
-                    if (streamingData?.Formats == null)
+                    if (streamingData == null)
                     {
                         return null;
                     }
 
                     var maxBitrate = _configuration.MaxBitrate ?? int.MaxValue;
-                    var format = streamingData.Value.Formats
-                        .Where(o => maxBitrate > o.Bitrate)
-                        .OrderByDescending(o => o.Bitrate)
-                        .FirstOrDefault();
+                    var selectedVideo = streamingData.First(i => i.AudioBitrate < maxBitrate);
+                    var streamUrl = selectedVideo.Uri;
+                    var bitrate = selectedVideo.AudioBitrate;
 
-                    var streamUrl = await _youTubeService.GetStreamUrlAsync(key, format).ConfigureAwait(false);
-                    _logger.LogDebug("{Function} Site={Site} Key={Key} Bitrate={Bitrate} StreamUrl={Url}", nameof(GetPlaybackUrlAsync), site, key, format.Bitrate, streamUrl);
-                    return (streamUrl, format.Bitrate);
+                    return (streamUrl, bitrate);
                 }
 
                 if (site.Equals("vimeo", StringComparison.OrdinalIgnoreCase))
@@ -757,6 +763,19 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 _logger.LogError(e, nameof(GetMediaSource));
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Get stream information from video item.
+        /// </summary>
+        /// <returns>Media source info.</returns>
+        public IEnumerable<IntroInfo> Get()
+        {
+            _logger.LogDebug("VideoPath: " + _appPaths.CachePath + "/tmdb-trailers/sample_video.mp4");
+            yield return new IntroInfo
+            {
+                Path = _appPaths.CachePath + "/tmdb-trailers/sample_video.mp4"
+            };
         }
     }
 }

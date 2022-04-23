@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
@@ -10,14 +10,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Jellyfin.Controller" Version="10.*-*" />
-      <PackageReference Include="TMDbLib" Version="1.8.1" />
-      <PackageReference Include="YouTubeFetcher.Core" Version="1.1.1" />
+      <PackageReference Include="Jellyfin.Controller" Version="10.7.7" />  
+      <PackageReference Include="TMDbLib" Version="1.8.0" />
+      <PackageReference Include="VideoLibrary" Version="3.1.9" />
     </ItemGroup>
 
     <!-- Code Analyzers-->
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0" PrivateAssets="All" />
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" PrivateAssets="All" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" PrivateAssets="All" />
         <PackageReference Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" PrivateAssets="All" />
@@ -28,6 +28,11 @@
     <ItemGroup>
       <EmbeddedResource Include="Config\configPage.html" />
       <EmbeddedResource Include="Images\jellyfin-plugin-tmdb.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Update="Config\PluginConfiguration.cs">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </Compile>
     </ItemGroup>
 
     <PropertyGroup>
