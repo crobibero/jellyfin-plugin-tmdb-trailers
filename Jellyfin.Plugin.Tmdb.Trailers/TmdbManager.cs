@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Jellyfin.Plugin.Tmdb.Trailers.Config;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller.Channels;
+using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Channels;
@@ -20,6 +21,7 @@ using TMDbLib.Client;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Search;
 using VideoLibrary;
+using libVideo = MediaBrowser.Controller.Entities.Video;
 using Video = TMDbLib.Objects.General.Video;
 
 namespace Jellyfin.Plugin.Tmdb.Trailers
@@ -34,12 +36,12 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// TMDb always returns 20 items.
         /// </summary>
         public const int PageSize = 20;
-
         private readonly TimeSpan _defaultCacheTime = TimeSpan.FromDays(1);
 
         private readonly ILogger<TmdbManager> _logger;
         private readonly IMemoryCache _memoryCache;
         private readonly IApplicationPaths _appPaths;
+        private readonly ILibraryManager _libManager;
 
         private readonly TMDbClient _client;
         private readonly PluginConfiguration _configuration;
@@ -48,13 +50,15 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// <summary>
         /// Initializes a new instance of the <see cref="TmdbManager"/> class.
         /// </summary>
+        /// <param name="libraryManager">Instance of the <see cref="ILibraryManager"/> interface.</param>
         /// <param name="applicationPaths">Instance of the <see cref="IApplicationPaths"/> interface.</param>
         /// <param name="loggerFactory">Instance of the <see cref="ILoggerFactory"/> interface.</param>
         /// <param name="memoryCache">Instance of the <see cref="IMemoryCache"/> interface.</param>
-        public TmdbManager(IApplicationPaths applicationPaths, ILoggerFactory loggerFactory, IMemoryCache memoryCache)
+        public TmdbManager(ILibraryManager libraryManager, IApplicationPaths applicationPaths, ILoggerFactory loggerFactory, IMemoryCache memoryCache)
         {
             _logger = loggerFactory.CreateLogger<TmdbManager>();
             _memoryCache = memoryCache;
+            _libManager = libraryManager;
             _appPaths = applicationPaths;
 
             _configuration = TmdbTrailerPlugin.Instance.Configuration;
@@ -768,10 +772,56 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// <returns>Media source info.</returns>
         public IEnumerable<IntroInfo> Get()
         {
+            UpdateLibrary("Test traileraki", _appPaths.CachePath + "/tmdb-trailers/sample_video.mp4");
+
             yield return new IntroInfo
             {
+                ItemId = _configuration.Id,
                 Path = _appPaths.CachePath + "/tmdb-trailers/sample_video.mp4"
             };
+        }
+
+        private void UpdateLibrary(string title, string path)
+        {
+            var result = _libManager.GetItemsResult(new InternalItemsQuery
+            {
+                HasAnyProviderId = new Dictionary<string, string>
+                {
+                    { "prerolls.video", title }
+                }
+            });
+
+            // not working yet
+            // the query above returns no results
+            if (result.Items.Count > 0)
+            {
+                foreach (var item in result.Items)
+                {
+                    _libManager.DeleteItem(item, new DeleteOptions());
+                }
+            }
+
+            // generate a video entity and strip keywords
+            var video = new libVideo
+            {
+                Id = Guid.NewGuid(),
+                Path = path,
+                ProviderIds = new Dictionary<string, string>
+                {
+                    { "prerolls.video", title }
+                },
+                Name = title
+                    .Replace("jellyfin", string.Empty, StringComparison.InvariantCultureIgnoreCase)
+                    .Replace("pre-roll", string.Empty, StringComparison.InvariantCultureIgnoreCase)
+                    .Trim()
+            };
+
+            _configuration.Id = video.Id;
+            TmdbTrailerPlugin.Instance.SaveConfiguration();
+
+            // insert the video into the database
+            // no clue why this is required if a method doesn't exist on the interface
+            _libManager.CreateItem(video, null);
         }
     }
 }
