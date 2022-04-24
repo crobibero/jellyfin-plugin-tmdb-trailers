@@ -11,7 +11,7 @@
                 "version": "8.0.0.0",
                 "changelog": "Only get stream url when requested\n",
                 "targetAbi": "10.8.0.0",
-                "sourceUrl": "https://github.com/crobibero/jellyfin-plugin-tmdb-trailers/releases/download/v6/tmdb-trailers_8.0.0.0.zip/tmdb-trailers/tmdb-trailers_8.0.0.0.zip",
+                "sourceUrl": "https://github.com/crobibero/jellyfin-plugin-tmdb-trailers/releases/download/v6/tmdb-trailers_8.0.0.0.zip",
                 "checksum": "b3ac9ad09c44e4bb21248fde245621a2",
                 "timestamp": "2022-04-24T14:29:31Z"
             }
