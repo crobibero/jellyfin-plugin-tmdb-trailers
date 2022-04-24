@@ -35,19 +35,29 @@
       </Compile>
     </ItemGroup>
     <ItemGroup>
-      <None Update="Deps\libvideo.dll">
+      <None Update="libvideo.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="Deps\Newtonsoft.Json.dll">
+      <None Update="Newtonsoft.Json.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="Deps\NiL.JS.dll">
+      <None Update="NiL.JS.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 
     <PropertyGroup>
         <CodeAnalysisRuleSet>../jellyfin.ruleset</CodeAnalysisRuleSet>
+        <BaseOutputPath>bin\</BaseOutputPath>
     </PropertyGroup>
+
+	<PropertyGroup>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+	</PropertyGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="copy &quot;$(TargetPath)&quot; C:\Users\ff_be\AppData\Local\jellyfin\plugins\Trailers_5.0.0.0" />
+	</Target>
 
 </Project>

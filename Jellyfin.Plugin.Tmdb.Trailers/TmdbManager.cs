@@ -21,7 +21,7 @@ using TMDbLib.Client;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Search;
 using VideoLibrary;
-using libVideo = MediaBrowser.Controller.Entities.Video;
+using entityVideo = MediaBrowser.Controller.Entities.Video;
 using Video = TMDbLib.Objects.General.Video;
 
 namespace Jellyfin.Plugin.Tmdb.Trailers
@@ -791,8 +791,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 }
             });
 
-            // not working yet
-            // the query above returns no results
+            // Delete all library items before run
             if (result.Items.Count > 0)
             {
                 foreach (var item in result.Items)
@@ -802,7 +801,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
             }
 
             // generate a video entity and strip keywords
-            var video = new libVideo
+            var video = new entityVideo
             {
                 Id = Guid.NewGuid(),
                 Path = path,
