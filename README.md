@@ -2,7 +2,7 @@
 <h3 align="center">Part of the <a href="https://jellyfin.media">Jellyfin Project</a></h3>
 
 <p align="center">
-This plugin is built with .NET Core to watch trailers sourced from TMDb
+This plugin is built with .NET to watch trailers sourced from TMDb
 </p>
 
 TODO:
@@ -21,3 +21,5 @@ TODO:
 dotnet publish --configuration Release --output bin
 ```
 4. Place the resulting file in the `plugins` folder under the program data directory or inside the portable install directory
+
+Repo: https://raw.githubusercontent.com/crobibero/jellyfin-plugin-tmdb-trailers/master/manifest.json
