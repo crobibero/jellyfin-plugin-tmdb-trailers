@@ -35,13 +35,13 @@
       </Compile>
     </ItemGroup>
     <ItemGroup>
-      <None Update="libvideo.dll">
+      <None Update="Deps\libvideo.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="Newtonsoft.Json.dll">
+      <None Update="Deps\Newtonsoft.Json.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="NiL.JS.dll">
+      <None Update="Deps\NiL.JS.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>
