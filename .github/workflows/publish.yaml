@@ -17,6 +17,10 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.0.x
+          
+      - name: Setup jprm
+        run: |
+          pip install --user git+https://github.com/oddstr13/jellyfin-plugin-metadata-manager
 
       - name: Build Jellyfin Plugin
         uses: oddstr13/jellyfin-plugin-repository-manager@v0.4.2
