@@ -16,4 +16,5 @@ artifacts:
   - "libvideo.dll"
   - "NiL.JS.dll"
 changelog: |-
+  - Prepare for release (#11) @github-actions
   - bump version to 6 (#10) @crobibero
