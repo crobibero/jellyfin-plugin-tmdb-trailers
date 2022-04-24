@@ -15,6 +15,5 @@ artifacts:
   - "TMDbLib.dll"
   - "libvideo.dll"
   - "NiL.JS.dll"
-changelog: >
-  Only get stream url when requested
-
+changelog: |-
+  - bump version to 6 (#10) @crobibero
