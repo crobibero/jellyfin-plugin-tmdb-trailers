@@ -7,8 +7,49 @@ on:
   workflow_dispatch:
 
 jobs:
-  call:
-    uses: jellyfin/jellyfin-meta-plugins/.github/workflows/publish.yaml@master
-    with:
-      version: ${{ github.event.release.tag_name }}
-      is-unstable: ${{ github.event.release.prerelease }}
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Build Jellyfin Plugin
+        uses: oddstr13/jellyfin-plugin-repository-manager@v0.4.2
+        id: jprm
+        with:
+          dotnet-target: net6.0
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: build-artifact
+          retention-days: 30
+          if-no-files-found: error
+          path: ${{ steps.jprm.outputs.artifact }}
+
+      - name: Upload to Release
+        id: release
+        if: ${{ github.event_name == 'release' }}
+        uses: shogo82148/actions-upload-release-asset@v1.5.0
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          overwrite: true
+          asset_path: ${{ steps.jprm.outputs.artifact }}
+          
+      - name: Update manifest
+        run: |
+          jprm repo add --url ${{ steps.release.outputs.browser_download_url }} ./manifest.json artifacts/*.zip
+          
+      - name: Commit manifest
+        run: |
+          git config user.name jellyfin-bot
+          git config user.email team@jellyfin.org
+          git pull
+          git add ./manifest.json
+          git commit -m "Update manifest.json"
+          git push --force origin master
