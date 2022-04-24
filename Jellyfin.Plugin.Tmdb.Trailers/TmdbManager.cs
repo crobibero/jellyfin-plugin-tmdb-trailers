@@ -175,12 +175,14 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 }
 
                 await Task.WhenAll(movieTasks).ConfigureAwait(false);
+                var resultList = new List<ChannelItemInfo>();
                 foreach (var task in movieTasks)
                 {
                     var result = await task.ConfigureAwait(false);
-                    channelItemsResult.Items.AddRange(GetVideoItem(result, true).Items);
+                    resultList.AddRange(GetVideoItem(result, true).Items);
                 }
 
+                channelItemsResult.Items = resultList;
                 _memoryCache.Set("all-trailer", channelItemsResult);
                 return channelItemsResult;
             }

@@ -102,7 +102,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers.Channels
         }
 
         /// <inheritdoc />
-        public async Task Execute(CancellationToken cancellationToken, IProgress<double> progress)
+        public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
         {
             if (TmdbTrailerPlugin.Instance.Configuration.EnableTrailersChannel)
             {
