@@ -11,7 +11,7 @@
                 "version": "6.0.0.0",
                 "changelog": "- Prepare for release (#11) @github-actions\n- bump version to 6 (#10) @crobibero",
                 "targetAbi": "10.8.0.0",
-                "sourceUrl": "https://github.com/crobibero/jellyfin-plugin-tmdb-trailers/releases/download/v6/tmdb-trailers_6.0.0.0.zip/tmdb-trailers/tmdb-trailers_6.0.0.0.zip",
+                "sourceUrl": "https://github.com/crobibero/jellyfin-plugin-tmdb-trailers/releases/download/v6/tmdb-trailers_6.0.0.0.zip",
                 "checksum": "222042eaf8650a5dee11f0e235c69096",
                 "timestamp": "2022-04-24T14:39:53Z"
             }
