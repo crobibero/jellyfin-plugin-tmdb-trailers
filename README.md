@@ -21,7 +21,3 @@ TODO:
 dotnet publish --configuration Release --output bin
 ```
 4. Place the resulting file in the `plugins` folder under the program data directory or inside the portable install directory
-
-## Repository
-
-https://repo.codyrobibero.dev/manifest.json
