@@ -17,8 +17,8 @@ using Microsoft.Extensions.Logging;
 using TMDbLib.Client;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Search;
-using YouTubeFetcher.Core.Factories;
-using YouTubeFetcher.Core.Services.Interfaces;
+using VideoLibrary;
+using Video = TMDbLib.Objects.General.Video;
 
 namespace Jellyfin.Plugin.Tmdb.Trailers
 {
@@ -40,21 +40,22 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
 
         private readonly TMDbClient _client;
         private readonly PluginConfiguration _configuration;
-        private readonly IYouTubeService _youTubeService;
+        private readonly YouTube _youTubeService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TmdbManager"/> class.
         /// </summary>
-        /// <param name="loggerFactory">Instance of the <see cref="ILoggerFactory"/> interface.</param>
+        /// <param name="logger">Instance of the <see cref="ILogger{TmdbManager}"/> interface.</param>
         /// <param name="memoryCache">Instance of the <see cref="IMemoryCache"/> interface.</param>
-        public TmdbManager(ILoggerFactory loggerFactory, IMemoryCache memoryCache)
+        /// <param name="jellyfinYouTubeClient">Instance of the <see cref="JellyfinYouTubeClient"/>.</param>
+        public TmdbManager(ILogger<TmdbManager> logger, IMemoryCache memoryCache, JellyfinYouTubeClient jellyfinYouTubeClient)
         {
-            _logger = loggerFactory.CreateLogger<TmdbManager>();
+            _logger = logger;
             _memoryCache = memoryCache;
 
             _configuration = TmdbTrailerPlugin.Instance.Configuration;
             _client = new TMDbClient(_configuration.ApiKey);
-            _youTubeService = new YouTubeServiceFactory().Create();
+            _youTubeService = jellyfinYouTubeClient;
         }
 
         /// <summary>
@@ -347,29 +348,28 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// <param name="site">Site to play from.</param>
         /// <param name="key">Video key.</param>
         /// <returns>Video playback url.</returns>
-        private async Task<(string Url, int Bitrate)?> GetPlaybackUrlAsync(string site, string key)
+        private async Task<string> GetPlaybackUrlAsync(string site, string key)
         {
             try
             {
                 if (site.Equals("youtube", StringComparison.OrdinalIgnoreCase))
                 {
-                    var streamingData = await _youTubeService.GetStreamingDataAsync(key).ConfigureAwait(false);
+                    var videoList = (await _youTubeService.GetAllVideosAsync($"https://www.youtube.com/watch?v={key}")).ToList();
+                    var bestVideo = videoList
+                        .Where(v => v.AudioBitrate > 0)
+                        .OrderByDescending(v => v.Resolution)
+                        .ThenByDescending(v => v.AudioBitrate)
+                        .FirstOrDefault();
 
                     // Invalid video.
-                    if (streamingData?.Formats == null)
+                    if (bestVideo is null)
                     {
                         return null;
                     }
 
-                    var maxBitrate = _configuration.MaxBitrate ?? int.MaxValue;
-                    var format = streamingData.Value.Formats
-                        .Where(o => maxBitrate > o.Bitrate)
-                        .OrderByDescending(o => o.Bitrate)
-                        .FirstOrDefault();
-
-                    var streamUrl = await _youTubeService.GetStreamUrlAsync(key, format).ConfigureAwait(false);
-                    _logger.LogDebug("{Function} Site={Site} Key={Key} Bitrate={Bitrate} StreamUrl={Url}", nameof(GetPlaybackUrlAsync), site, key, format.Bitrate, streamUrl);
-                    return (streamUrl, format.Bitrate);
+                    var streamUri = await bestVideo.GetUriAsync();
+                    _logger.LogDebug("{Function} Site={Site} Key={Key} Resolution={Resolution} StreamUrl={Url}", nameof(GetPlaybackUrlAsync), site, key, bestVideo.Resolution, streamUri);
+                    return streamUri;
                 }
 
                 if (site.Equals("vimeo", StringComparison.OrdinalIgnoreCase))
@@ -747,8 +747,8 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 return new MediaSourceInfo
                 {
                     Name = video.Name,
-                    Path = response.Value.Url,
-                    Bitrate = response.Value.Bitrate,
+                    Path = response,
+                    // Bitrate = response.Value.Bitrate,
                     Protocol = MediaProtocol.Http,
                     Id = video.Id,
                     IsRemote = true
