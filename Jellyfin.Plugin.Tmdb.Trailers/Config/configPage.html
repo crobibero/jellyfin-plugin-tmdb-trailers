@@ -134,6 +134,7 @@
 
         document.querySelector(".esqConfigurationForm").addEventListener("submit", function(e){
             Dashboard.showLoadingMsg();
+            e.preventDefault();
 
             window.ApiClient.getPluginConfiguration(TmdbTrailerPlugin.pluginUniqueId).then(function (config) {
                 config.Language = TmdbTrailerPlugin.txtTmdbLanguage.value;
@@ -152,7 +153,6 @@
                 config.EnableTrailersTopRated = TmdbTrailerPlugin.chkTmdbEnableTrailersTopRated.checked;
                 config.TrailerLimit = TmdbTrailerPlugin.txtTmdbTrailerLimit.value;
                 window.ApiClient.updatePluginConfiguration(TmdbTrailerPlugin.pluginUniqueId, config).then(Dashboard.processPluginConfigurationUpdateResult);
-                e.preventDefault();
             });
 
             // Disable default form submission
