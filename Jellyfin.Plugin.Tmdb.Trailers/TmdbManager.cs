@@ -1,11 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.Tmdb.Trailers.Config;
+using MediaBrowser.Common.Configuration;
+using MediaBrowser.Common.Extensions;
+using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Channels;
+using MediaBrowser.Controller.Entities;
+using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Channels;
 using MediaBrowser.Model.Drawing;
@@ -34,9 +41,13 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         public const int PageSize = 20;
 
         private readonly TimeSpan _defaultCacheTime = TimeSpan.FromDays(1);
+        private readonly List<string> _cacheIds = new();
 
         private readonly ILogger<TmdbManager> _logger;
         private readonly IMemoryCache _memoryCache;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IApplicationPaths _applicationPaths;
+        private readonly ILibraryManager _libraryManager;
 
         private readonly TMDbClient _client;
         private readonly PluginConfiguration _configuration;
@@ -48,7 +59,16 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// <param name="logger">Instance of the <see cref="ILogger{TmdbManager}"/> interface.</param>
         /// <param name="memoryCache">Instance of the <see cref="IMemoryCache"/> interface.</param>
         /// <param name="jellyfinYouTubeClient">Instance of the <see cref="JellyfinYouTubeClient"/>.</param>
-        public TmdbManager(ILogger<TmdbManager> logger, IMemoryCache memoryCache, JellyfinYouTubeClient jellyfinYouTubeClient)
+        /// <param name="httpClientFactory">Instance of the <see cref="IHttpClientFactory"/> interface.</param>
+        /// <param name="applicationPaths">Instance of the <see cref="IApplicationPaths"/> interface.</param>
+        /// <param name="libraryManager">Instance of the <see cref="ILibraryManager"/> interface.</param>
+        public TmdbManager(
+            ILogger<TmdbManager> logger,
+            IMemoryCache memoryCache,
+            JellyfinYouTubeClient jellyfinYouTubeClient,
+            IHttpClientFactory httpClientFactory,
+            IApplicationPaths applicationPaths,
+            ILibraryManager libraryManager)
         {
             _logger = logger;
             _memoryCache = memoryCache;
@@ -56,7 +76,12 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
             _configuration = TmdbTrailerPlugin.Instance.Configuration;
             _client = new TMDbClient(_configuration.ApiKey);
             _youTubeService = jellyfinYouTubeClient;
+            _httpClientFactory = httpClientFactory;
+            _applicationPaths = applicationPaths;
+            _libraryManager = libraryManager;
         }
+
+        private string CachePath => Path.Join(_applicationPaths.CachePath, "tmdb-intro-trailers");
 
         /// <summary>
         /// Get channel items.
@@ -112,8 +137,9 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 // Get video streams for item.
                 else if (int.TryParse(query.FolderId, out var movieId))
                 {
-                    var videos = await GetMovieStreamsAsync(movieId, cancellationToken).ConfigureAwait(false);
-                    result = GetVideoItem(videos, false);
+                    var searchMovie = new SearchMovie { Id = movieId };
+                    var videos = await GetMovieStreamsAsync(searchMovie, cancellationToken).ConfigureAwait(false);
+                    result = GetVideoItem(videos.Movie, videos.Result, false);
                 }
 
                 if (result != null)
@@ -149,30 +175,30 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 var query = new InternalChannelItemQuery();
 
                 var channelItemsResult = new ChannelItemResult();
-                var movieTasks = new List<Task<ResultContainer<Video>>>();
+                var movieTasks = new List<Task<(SearchMovie Movie, ResultContainer<Video> Result)>>();
 
                 if (TmdbTrailerPlugin.Instance.Configuration.EnableTrailersUpcoming)
                 {
                     var upcomingMovies = await GetUpcomingMoviesAsync(query, cancellationToken).ConfigureAwait(false);
-                    movieTasks.AddRange(upcomingMovies.Select(movie => GetMovieStreamsAsync(movie.Id, cancellationToken)));
+                    movieTasks.AddRange(upcomingMovies.Select(movie => GetMovieStreamsAsync(movie, cancellationToken)));
                 }
 
                 if (TmdbTrailerPlugin.Instance.Configuration.EnableTrailersNowPlaying)
                 {
                     var nowPlayingMovies = await GetNowPlayingMoviesAsync(query, cancellationToken).ConfigureAwait(false);
-                    movieTasks.AddRange(nowPlayingMovies.Select(movie => GetMovieStreamsAsync(movie.Id, cancellationToken)));
+                    movieTasks.AddRange(nowPlayingMovies.Select(movie => GetMovieStreamsAsync(movie, cancellationToken)));
                 }
 
                 if (TmdbTrailerPlugin.Instance.Configuration.EnableTrailersPopular)
                 {
                     var popularMovies = await GetPopularMoviesAsync(query, cancellationToken).ConfigureAwait(false);
-                    movieTasks.AddRange(popularMovies.Select(movie => GetMovieStreamsAsync(movie.Id, cancellationToken)));
+                    movieTasks.AddRange(popularMovies.Select(movie => GetMovieStreamsAsync(movie, cancellationToken)));
                 }
 
                 if (TmdbTrailerPlugin.Instance.Configuration.EnableTrailersTopRated)
                 {
                     var topRatedMovies = await GetTopRatedMoviesAsync(query, cancellationToken).ConfigureAwait(false);
-                    movieTasks.AddRange(topRatedMovies.Select(movie => GetMovieStreamsAsync(movie.Id, cancellationToken)));
+                    movieTasks.AddRange(topRatedMovies.Select(movie => GetMovieStreamsAsync(movie, cancellationToken)));
                 }
 
                 await Task.WhenAll(movieTasks).ConfigureAwait(false);
@@ -180,7 +206,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 foreach (var task in movieTasks)
                 {
                     var result = await task.ConfigureAwait(false);
-                    resultList.AddRange(GetVideoItem(result, true).Items);
+                    resultList.AddRange(GetVideoItem(result.Movie, result.Result, true).Items);
                 }
 
                 channelItemsResult.Items = resultList;
@@ -382,7 +408,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
             catch (Exception e)
             {
                 _logger.LogError(e, nameof(GetPlaybackUrlAsync));
-                throw;
+                return null;
             }
         }
 
@@ -589,17 +615,17 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// <summary>
         /// Get available movie streams.
         /// </summary>
-        /// <param name="id">Movie id.</param>
+        /// <param name="movie">The movie.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The movie streams.</returns>
-        private async Task<ResultContainer<Video>> GetMovieStreamsAsync(int id, CancellationToken cancellationToken)
+        private async Task<(SearchMovie Movie, ResultContainer<Video> Result)> GetMovieStreamsAsync(SearchMovie movie, CancellationToken cancellationToken)
         {
             try
             {
-                _logger.LogDebug("{Function} Id={Id}", nameof(GetMovieStreamsAsync), id);
-                var response = await _client.GetMovieVideosAsync(id, cancellationToken).ConfigureAwait(false);
+                _logger.LogDebug("{Function} Id={Id}", nameof(GetMovieStreamsAsync), movie.Id);
+                var response = await _client.GetMovieVideosAsync(movie.Id, cancellationToken).ConfigureAwait(false);
                 _logger.LogDebug("{Function} Response={@Response}", nameof(GetMovieStreamsAsync), response);
-                return response;
+                return (movie, response);
             }
             catch (Exception e)
             {
@@ -608,7 +634,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
             }
         }
 
-        private ChannelItemResult GetVideoItem(ResultContainer<Video> videoResult, bool trailerChannel)
+        private ChannelItemResult GetVideoItem(SearchMovie searchMovie, ResultContainer<Video> videoResult, bool trailerChannel)
         {
             try
             {
@@ -626,6 +652,11 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                     if (channelItemInfo == null)
                     {
                         continue;
+                    }
+
+                    if (!string.IsNullOrEmpty(searchMovie.Title))
+                    {
+                        channelItemInfo.Name = $"{searchMovie.Title} - {channelItemInfo.Name}";
                     }
 
                     channelItems.Add(channelItemInfo);
@@ -759,6 +790,98 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 _logger.LogError(e, nameof(GetMediaSource));
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Update the intro cache.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task UpdateIntroCache(CancellationToken cancellationToken)
+        {
+            Directory.CreateDirectory(CachePath);
+
+            var channelItems = await GetAllChannelItems(false, cancellationToken);
+            var client = _httpClientFactory.CreateClient(NamedClient.Default);
+
+            var deleteOptions = new DeleteOptions { DeleteFileLocation = true };
+            var existingCache = Directory.GetFiles(CachePath);
+            var existingIds = existingCache.Select(c => Path.GetFileNameWithoutExtension(c)).ToArray();
+            for (var i = 0; i < existingCache.Length; i++)
+            {
+                var existingId = existingIds[i];
+                if (!channelItems.Items.Any(c => string.Equals(c.Id, existingId, StringComparison.OrdinalIgnoreCase)))
+                {
+                    var guid = existingId.GetMD5();
+                    var item = _libraryManager.GetItemById(guid);
+                    if (item is not null)
+                    {
+                        // item no longer cached, so delete.
+                        _libraryManager.DeleteItem(item, deleteOptions);
+                    }
+                }
+            }
+
+            _cacheIds.Clear();
+            foreach (var item in channelItems.Items)
+            {
+                if (existingIds.Any(i => string.Equals(i, item.Id, StringComparison.OrdinalIgnoreCase)))
+                {
+                    // Item is already cached, skip
+                    _cacheIds.Add(item.Id);
+                    continue;
+                }
+
+                var mediaSource = await GetMediaSource(item.Id);
+                if (mediaSource is null)
+                {
+                    continue;
+                }
+
+                var response = await client.GetAsync(mediaSource.Path, cancellationToken);
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("Unable to cache {Path}", mediaSource.Path);
+                    continue;
+                }
+
+                var destinationPath = Path.Combine(CachePath, $"{item.Id}.mp4");
+                await using var destinationFileStream = File.OpenWrite(destinationPath);
+                await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+                await responseStream.CopyToAsync(destinationFileStream, cancellationToken);
+                _cacheIds.Add(item.Id);
+                _libraryManager.CreateItem(
+                    new Trailer
+                    {
+                        Id = item.Id.GetMD5(),
+                        Name = item.Name,
+                        Path = destinationPath
+                    },
+                    null);
+            }
+        }
+
+        /// <summary>
+        /// Get random intros.
+        /// </summary>
+        /// <returns>The list of intros.</returns>
+        public IEnumerable<IntroInfo> GetIntros()
+        {
+            var introCount = TmdbTrailerPlugin.Instance.Configuration.IntroCount;
+            if (introCount <= 0 || _cacheIds.Count == 0)
+            {
+                return Enumerable.Empty<IntroInfo>();
+            }
+
+            var intros = new List<IntroInfo>(introCount);
+            for (var i = 0; i < introCount; i++)
+            {
+                var index = Random.Shared.Next(_cacheIds.Count);
+                var id = _cacheIds[index];
+                intros.Add(new IntroInfo { ItemId = id.GetMD5() });
+            }
+
+            return intros;
         }
     }
 }
