@@ -83,6 +83,12 @@
                                 default: 20
                             </div>
                         </div>
+                        <div class="inputContainer">
+                            <input is="emby-input" type="text" id="txtTmdbIntroCount" label="Intro Count:" />
+                            <div class="fieldDescription">
+                                The number of trailers to play as intros.
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <button is="emby-button" type="submit" data-theme="b" class="raised button-submit block">
@@ -111,7 +117,8 @@
             chkTmdbEnableTrailersNowPlaying: document.getElementById("chkTmdbEnableTrailersNowPlaying"),
             chkTmdbEnableTrailersPopular: document.getElementById("chkTmdbEnableTrailersPopular"),
             chkTmdbEnableTrailersTopRated: document.getElementById("chkTmdbEnableTrailersTopRated"),
-            txtTmdbTrailerLimit: document.getElementById("txtTmdbTrailerLimit")
+            txtTmdbTrailerLimit: document.getElementById("txtTmdbTrailerLimit"),
+            txtTmdbIntroCount: document.getElementById("txtTmdbIntroCount")
         };
 
         window.addEventListener("pageshow", function (_) {
@@ -128,6 +135,7 @@
                 TmdbTrailerPlugin.chkTmdbEnableTrailersPopular.checked = config.EnableTrailersPopular;
                 TmdbTrailerPlugin.chkTmdbEnableTrailersTopRated.checked = config.EnableTrailersTopRated;
                 TmdbTrailerPlugin.txtTmdbTrailerLimit.value = config.TrailerLimit || 20;
+                TmdbTrailerPlugin.txtTmdbIntroCount.value = config.IntroCount || 0;
                 Dashboard.hideLoadingMsg();
             });
         });
@@ -152,6 +160,7 @@
                 config.EnableTrailersPopular = TmdbTrailerPlugin.chkTmdbEnableTrailersPopular.checked;
                 config.EnableTrailersTopRated = TmdbTrailerPlugin.chkTmdbEnableTrailersTopRated.checked;
                 config.TrailerLimit = TmdbTrailerPlugin.txtTmdbTrailerLimit.value;
+                config.IntroCount = TmdbTrailerPlugin.txtTmdbIntroCount.value;
                 window.ApiClient.updatePluginConfiguration(TmdbTrailerPlugin.pluginUniqueId, config).then(Dashboard.processPluginConfigurationUpdateResult);
             });
 

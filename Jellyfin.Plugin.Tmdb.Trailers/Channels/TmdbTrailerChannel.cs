@@ -107,6 +107,10 @@ namespace Jellyfin.Plugin.Tmdb.Trailers.Channels
             if (TmdbTrailerPlugin.Instance.Configuration.EnableTrailersChannel)
             {
                 await _tmdbManager.GetAllChannelItems(true, cancellationToken).ConfigureAwait(false);
+                if (TmdbTrailerPlugin.Instance.Configuration.IntroCount > 0)
+                {
+                    await _tmdbManager.UpdateIntroCache(cancellationToken);
+                }
             }
         }
 
