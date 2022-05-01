@@ -1,7 +1,7 @@
 name: "TMDb Trailers"
 guid: "69104C31-D23F-4040-B99C-8913C09751D6"
 version: "7"
-targetAbi: "10.8.0.0"
+targetAbi: "10.7.7.0"
 framework: "net6.0"
 owner: "crobibero"
 overview: "Watch trailers from TMDb"
@@ -16,5 +16,7 @@ artifacts:
   - "libvideo.dll"
   - "NiL.JS.dll"
 changelog: |-
-  - Prepare for release (#11) @github-actions
-  - bump version to 6 (#10) @crobibero
+  - Add ability to user trailers as intro (#19) @crobibero
+  - Fix saving changes (#17) @crobibero
+  - ci(deps): bump shogo82148/actions-upload-release-asset from 1.5.0 to 1.6.2 (#16) @dependabot
+  - ci(deps): bump actions/upload-artifact from 2.3.1 to 3.0.0 (#15) @dependabot
