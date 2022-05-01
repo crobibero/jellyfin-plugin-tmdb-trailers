@@ -16,5 +16,7 @@ artifacts:
   - "libvideo.dll"
   - "NiL.JS.dll"
 changelog: |-
-  - Prepare for release (#11) @github-actions
-  - bump version to 6 (#10) @crobibero
+  - Add ability to user trailers as intro (#19) @crobibero
+  - Fix saving changes (#17) @crobibero
+  - ci(deps): bump shogo82148/actions-upload-release-asset from 1.5.0 to 1.6.2 (#16) @dependabot
+  - ci(deps): bump actions/upload-artifact from 2.3.1 to 3.0.0 (#15) @dependabot
