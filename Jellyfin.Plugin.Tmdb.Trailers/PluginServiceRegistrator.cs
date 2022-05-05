@@ -9,6 +9,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// <inheritdoc />
         public void RegisterServices(IServiceCollection serviceCollection)
         {
+            serviceCollection.AddSingleton<JellyfinYouTubeClient>();
             serviceCollection.AddSingleton<TmdbManager>();
         }
     }

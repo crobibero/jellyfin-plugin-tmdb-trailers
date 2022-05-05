@@ -80,6 +80,11 @@ namespace Jellyfin.Plugin.Tmdb.Trailers.Config
         public bool EnableTrailersTopRated { get; set; }
 
         /// <summary>
+        /// Gets or sets the intro count.
+        /// </summary>
+        public int IntroCount { get; set; }
+
+        /// <summary>
         /// Gets or sets the trailer limit per category.
         /// </summary>
         public int TrailerLimit { get; set; }
