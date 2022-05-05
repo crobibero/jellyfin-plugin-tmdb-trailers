@@ -381,11 +381,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 if (site.Equals("youtube", StringComparison.OrdinalIgnoreCase))
                 {
                     var videoList = (await _youTubeService.GetAllVideosAsync($"https://www.youtube.com/watch?v={key}")).ToList();
-                    var bestVideo = videoList
-                        .Where(v => v.AudioBitrate > 0)
-                        .OrderByDescending(v => v.Resolution)
-                        .ThenByDescending(v => v.AudioBitrate)
-                        .FirstOrDefault();
+                    var bestVideo = videoList.First(i => i.Resolution == videoList.Max(j => j.Resolution));
 
                     // Invalid video.
                     if (bestVideo is null)
