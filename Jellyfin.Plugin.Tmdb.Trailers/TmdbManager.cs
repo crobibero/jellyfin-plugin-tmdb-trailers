@@ -865,7 +865,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 var index = Random.Shared.Next(_cacheIds.Count);
                 var id = _cacheIds[index];
                 var trailerExists = intros.FirstOrDefault(o => o.ItemId == id.GetMD5());
-                if (trailerExists != null && i <= _cacheIds.Count)
+                if (trailerExists != null && i < _cacheIds.Count)
                 {
                     continue;
                 }
