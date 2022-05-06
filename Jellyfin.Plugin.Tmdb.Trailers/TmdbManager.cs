@@ -412,6 +412,12 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 var channelItems = new List<ChannelItemInfo>();
                 foreach (var item in movies)
                 {
+                    var trailerExists = channelItems.FirstOrDefault(o => o.Name == item.Title);
+                    if (trailerExists != null)
+                    {
+                        continue;
+                    }
+
                     var posterUrl = GetImageUrl(item.PosterPath);
                     _memoryCache.Set($"{item.Id}-item", item, _defaultCacheTime);
                     _memoryCache.Set($"{item.Id}-poster", posterUrl, _defaultCacheTime);
