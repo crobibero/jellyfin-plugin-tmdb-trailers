@@ -24,7 +24,8 @@ using Microsoft.Extensions.Logging;
 using TMDbLib.Client;
 using TMDbLib.Objects.General;
 using TMDbLib.Objects.Search;
-using VideoLibrary;
+using YoutubeExplode;
+using YoutubeExplode.Converter;
 using Video = TMDbLib.Objects.General.Video;
 
 namespace Jellyfin.Plugin.Tmdb.Trailers
@@ -51,21 +52,19 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
 
         private readonly TMDbClient _client;
         private readonly PluginConfiguration _configuration;
-        private readonly YouTube _youTubeService;
+        private readonly YoutubeClient _youTubeService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TmdbManager"/> class.
         /// </summary>
         /// <param name="logger">Instance of the <see cref="ILogger{TmdbManager}"/> interface.</param>
         /// <param name="memoryCache">Instance of the <see cref="IMemoryCache"/> interface.</param>
-        /// <param name="jellyfinYouTubeClient">Instance of the <see cref="JellyfinYouTubeClient"/>.</param>
         /// <param name="httpClientFactory">Instance of the <see cref="IHttpClientFactory"/> interface.</param>
         /// <param name="applicationPaths">Instance of the <see cref="IApplicationPaths"/> interface.</param>
         /// <param name="libraryManager">Instance of the <see cref="ILibraryManager"/> interface.</param>
         public TmdbManager(
             ILogger<TmdbManager> logger,
             IMemoryCache memoryCache,
-            JellyfinYouTubeClient jellyfinYouTubeClient,
             IHttpClientFactory httpClientFactory,
             IApplicationPaths applicationPaths,
             ILibraryManager libraryManager)
@@ -75,7 +74,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
 
             _configuration = TmdbTrailerPlugin.Instance.Configuration;
             _client = new TMDbClient(_configuration.ApiKey);
-            _youTubeService = jellyfinYouTubeClient;
+            _youTubeService = new YoutubeClient();
             _httpClientFactory = httpClientFactory;
             _applicationPaths = applicationPaths;
             _libraryManager = libraryManager;
@@ -374,24 +373,16 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// <param name="site">Site to play from.</param>
         /// <param name="key">Video key.</param>
         /// <returns>Video playback url.</returns>
-        private async Task<string> GetPlaybackUrlAsync(string site, string key)
+        private async Task<YoutubeExplode.Videos.Video> GetPlaybackUrlAsync(string site, string key)
         {
             try
             {
                 if (site.Equals("youtube", StringComparison.OrdinalIgnoreCase))
                 {
-                    var videoList = (await _youTubeService.GetAllVideosAsync($"https://www.youtube.com/watch?v={key}")).ToList();
-                    var bestVideo = videoList.First(i => i.Resolution == videoList.Max(j => j.Resolution));
+                    var videoMeta = await _youTubeService.Videos.GetAsync(key);
 
-                    // Invalid video.
-                    if (bestVideo is null)
-                    {
-                        return null;
-                    }
-
-                    var streamUri = await bestVideo.GetUriAsync();
-                    _logger.LogDebug("{Function} Site={Site} Key={Key} Resolution={Resolution} StreamUrl={Url}", nameof(GetPlaybackUrlAsync), site, key, bestVideo.Resolution, streamUri);
-                    return streamUri;
+                    _logger.LogDebug("{Function} Site={Site} Key={Key} Title={Title} StreamUrl={Url}", nameof(GetPlaybackUrlAsync), site, key, videoMeta.Title, videoMeta.Url);
+                    return videoMeta;
                 }
 
                 if (site.Equals("vimeo", StringComparison.OrdinalIgnoreCase))
@@ -774,8 +765,8 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 return new MediaSourceInfo
                 {
                     Name = video.Name,
-                    Path = response,
-                    // Bitrate = response.Value.Bitrate,
+                    Path = response.Id,
+                   // Bitrate = response.v,
                     Protocol = MediaProtocol.Http,
                     Id = video.Id,
                     IsRemote = true
@@ -798,7 +789,6 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
             Directory.CreateDirectory(CachePath);
 
             var channelItems = await GetAllChannelItems(false, cancellationToken);
-            var client = _httpClientFactory.CreateClient(NamedClient.Default);
 
             var deleteOptions = new DeleteOptions { DeleteFileLocation = true };
             var existingCache = Directory.GetFiles(CachePath);
@@ -828,23 +818,22 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                     continue;
                 }
 
+                var destinationPath = Path.Combine(CachePath, $"{item.Id}.mp4");
                 var mediaSource = await GetMediaSource(item.Id);
                 if (mediaSource is null)
                 {
                     continue;
                 }
 
-                var response = await client.GetAsync(mediaSource.Path, cancellationToken);
-                if (!response.IsSuccessStatusCode)
+                try
                 {
-                    _logger.LogWarning("Unable to cache {Path}", mediaSource.Path);
-                    continue;
+                    await _youTubeService.Videos.DownloadAsync(mediaSource.Path, destinationPath, null, cancellationToken);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogWarning("Unable to cache {Path}. Exception: {E}", mediaSource.Path, e);
                 }
 
-                var destinationPath = Path.Combine(CachePath, $"{item.Id}.mp4");
-                await using var destinationFileStream = File.OpenWrite(destinationPath);
-                await using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken);
-                await responseStream.CopyToAsync(destinationFileStream, cancellationToken);
                 _cacheIds.Add(item.Id);
                 _libraryManager.CreateItem(
                     new Trailer

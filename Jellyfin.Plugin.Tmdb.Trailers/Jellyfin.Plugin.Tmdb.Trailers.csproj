@@ -12,7 +12,6 @@
     <ItemGroup>
       <PackageReference Include="Jellyfin.Controller" Version="10.*-*" />
       <PackageReference Include="TMDbLib" Version="1.9.2" />
-      <PackageReference Include="VideoLibrary" Version="3.1.9" />
     </ItemGroup>
 
     <!-- Code Analyzers-->
@@ -21,6 +20,8 @@
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" PrivateAssets="All" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406" PrivateAssets="All" />
         <PackageReference Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" PrivateAssets="All" />
+        <PackageReference Include="YoutubeExplode" Version="6.1.2" />
+        <PackageReference Include="YoutubeExplode.Converter" Version="6.1.2" />
     </ItemGroup>
     <ItemGroup>
       <None Remove="tmdb.png" />
@@ -28,6 +29,9 @@
     <ItemGroup>
       <EmbeddedResource Include="Config\configPage.html" />
       <EmbeddedResource Include="Images\jellyfin-plugin-tmdb.png" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="..\.editorconfig" Link=".editorconfig" />
     </ItemGroup>
 
     <PropertyGroup>
