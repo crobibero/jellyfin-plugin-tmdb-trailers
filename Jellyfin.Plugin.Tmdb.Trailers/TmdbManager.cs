@@ -26,6 +26,7 @@ using TMDbLib.Objects.General;
 using TMDbLib.Objects.Search;
 using YoutubeExplode;
 using YoutubeExplode.Converter;
+using YoutubeExplode.Videos.Streams;
 using Video = TMDbLib.Objects.General.Video;
 
 namespace Jellyfin.Plugin.Tmdb.Trailers
@@ -373,16 +374,17 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// <param name="site">Site to play from.</param>
         /// <param name="key">Video key.</param>
         /// <returns>Video playback url.</returns>
-        private async Task<YoutubeExplode.Videos.Video> GetPlaybackUrlAsync(string site, string key)
+        private async Task<string> GetPlaybackUrlAsync(string site, string key)
         {
             try
             {
                 if (site.Equals("youtube", StringComparison.OrdinalIgnoreCase))
                 {
                     var videoMeta = await _youTubeService.Videos.GetAsync(key);
+                    var streamManifest = await _youTubeService.Videos.Streams.GetManifestAsync(key);
+                    var uri = streamManifest.GetMuxedStreams().GetWithHighestVideoQuality().Url;
 
-                    _logger.LogDebug("{Function} Site={Site} Key={Key} Title={Title} StreamUrl={Url}", nameof(GetPlaybackUrlAsync), site, key, videoMeta.Title, videoMeta.Url);
-                    return videoMeta;
+                    return uri;
                 }
 
                 if (site.Equals("vimeo", StringComparison.OrdinalIgnoreCase))
@@ -757,6 +759,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 }
 
                 var response = await GetPlaybackUrlAsync(video.Site, video.Key).ConfigureAwait(false);
+
                 if (response == null)
                 {
                     return null;
@@ -765,8 +768,8 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 return new MediaSourceInfo
                 {
                     Name = video.Name,
-                    Path = response.Id,
-                   // Bitrate = response.v,
+                    Path = response,
+                    TranscodingUrl = video.Key,
                     Protocol = MediaProtocol.Http,
                     Id = video.Id,
                     IsRemote = true
@@ -827,7 +830,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
 
                 try
                 {
-                    await _youTubeService.Videos.DownloadAsync(mediaSource.Path, destinationPath, null, cancellationToken);
+                    await _youTubeService.Videos.DownloadAsync(mediaSource.TranscodingUrl, destinationPath, null, cancellationToken);
                 }
                 catch (Exception e)
                 {
@@ -865,7 +868,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
                 var index = Random.Shared.Next(_cacheIds.Count);
                 var id = _cacheIds[index];
                 var trailerExists = intros.FirstOrDefault(o => o.ItemId == id.GetMD5());
-                if (trailerExists != null && i < _cacheIds.Count)
+                if (trailerExists != null && i < _cacheIds.Count && introCount <= _cacheIds.Count)
                 {
                     continue;
                 }
