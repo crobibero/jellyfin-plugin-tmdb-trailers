@@ -18,7 +18,4 @@ artifacts:
   - "YoutubeExplode.dll"
   - "YoutubeExplode.Converter.dll"
 changelog: |-
-  - Add ability to user trailers as intro (#19) @crobibero
-  - Fix saving changes (#17) @crobibero
-  - ci(deps): bump shogo82148/actions-upload-release-asset from 1.5.0 to 1.6.2 (#16) @dependabot
-  - ci(deps): bump actions/upload-artifact from 2.3.1 to 3.0.0 (#15) @dependabot
+  - Fixes applied (#23) @m33ts4k0z
