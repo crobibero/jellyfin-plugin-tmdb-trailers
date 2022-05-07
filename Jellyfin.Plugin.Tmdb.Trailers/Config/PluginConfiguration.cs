@@ -1,5 +1,4 @@
-﻿using System;
-using MediaBrowser.Model.Plugins;
+﻿using MediaBrowser.Model.Plugins;
 
 namespace Jellyfin.Plugin.Tmdb.Trailers.Config
 {
@@ -17,13 +16,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers.Config
             EnableTrailersUpcoming = true;
             EnableTrailersNowPlaying = true;
             TrailerLimit = 20;
-            Id = Guid.Empty;
         }
-
-        /// <summary>
-        /// Gets or sets the video Id.
-        /// </summary>
-        public Guid Id { get; set; }
 
         /// <summary>
         /// Gets or sets the api key.

@@ -31,7 +31,21 @@
       <EmbeddedResource Include="Images\jellyfin-plugin-tmdb.png" />
     </ItemGroup>
     <ItemGroup>
-      <None Include="..\.editorconfig" Link=".editorconfig" />
+      <None Update="AngleSharp.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="CliWrap.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="TMDbLib.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="YoutubeExplode.Converter.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="YoutubeExplode.dll">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <PropertyGroup>
