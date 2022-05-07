@@ -376,6 +376,7 @@ namespace Jellyfin.Plugin.Tmdb.Trailers
         /// <returns>Video playback url.</returns>
         private async Task<string> GetPlaybackUrlAsync(string site, string key)
         {
+
             try
             {
                 if (site.Equals("youtube", StringComparison.OrdinalIgnoreCase))
