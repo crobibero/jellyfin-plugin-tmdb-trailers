@@ -33,13 +33,6 @@
                                 <a is="emby-button" class="raised button-alt" target="_blank" href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">Language Code Reference</a>
                             </div>
                         </div>
-                        <div class="inputContainer">
-                            <input is="emby-input" type="text" id="txtTmdbMaxBitrate" label="Max Bitrate:" />
-                            <div class="fieldDescription">
-                                The maximum bitrate trailer to play
-                                default: null
-                            </div>
-                        </div>
                         <div class="checkboxContainer">
                             <label>
                                 <input type="checkbox" is="emby-checkbox" id="chkTmdbEnableExtras" />
@@ -110,7 +103,6 @@
 
             txtTmdbLanguage: document.getElementById("txtTmdbLanguage"),
             txtTmdbRegion: document.getElementById("txtTmdbRegion"),
-            txtTmdbMaxBitrate: document.getElementById("txtTmdbMaxBitrate"),
             chkTmdbEnableExtras: document.getElementById("chkTmdbEnableExtras"),
             chkTmdbEnableTrailers: document.getElementById("chkTmdbEnableTrailers"),
             chkTmdbEnableTrailersUpcoming: document.getElementById("chkTmdbEnableTrailersUpcoming"),
@@ -127,7 +119,6 @@
             window.ApiClient.getPluginConfiguration(TmdbTrailerPlugin.pluginUniqueId).then(function (config) {
                 TmdbTrailerPlugin.txtTmdbLanguage.value = config.Language || '';
                 TmdbTrailerPlugin.txtTmdbRegion.value = config.Region || '';
-                TmdbTrailerPlugin.txtTmdbMaxBitrate.value = config.MaxBitrate || '';
                 TmdbTrailerPlugin.chkTmdbEnableExtras.checked = config.EnableExtrasChannel;
                 TmdbTrailerPlugin.chkTmdbEnableTrailers.checked = config.EnableTrailersChannel;
                 TmdbTrailerPlugin.chkTmdbEnableTrailersUpcoming.checked = config.EnableTrailersUpcoming;
@@ -147,12 +138,6 @@
             window.ApiClient.getPluginConfiguration(TmdbTrailerPlugin.pluginUniqueId).then(function (config) {
                 config.Language = TmdbTrailerPlugin.txtTmdbLanguage.value;
                 config.Region = TmdbTrailerPlugin.txtTmdbRegion.value;
-                if(TmdbTrailerPlugin.txtTmdbMaxBitrate.value === ''){
-                    config.MaxBitrate = null;
-                } else {
-                    config.MaxBitrate = TmdbTrailerPlugin.txtTmdbMaxBitrate.value; 
-                }
-
                 config.EnableExtrasChannel = TmdbTrailerPlugin.chkTmdbEnableExtras.checked;
                 config.EnableTrailersChannel = TmdbTrailerPlugin.chkTmdbEnableTrailers.checked;
                 config.EnableTrailersUpcoming = TmdbTrailerPlugin.chkTmdbEnableTrailersUpcoming.checked;

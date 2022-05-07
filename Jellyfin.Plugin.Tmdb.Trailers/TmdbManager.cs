@@ -14,6 +14,7 @@ using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Channels;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
+using MediaBrowser.Controller.MediaEncoding;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Channels;
 using MediaBrowser.Model.Drawing;
@@ -51,6 +52,7 @@ public class TmdbManager : IDisposable
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IApplicationPaths _applicationPaths;
     private readonly ILibraryManager _libraryManager;
+    private readonly IMediaEncoder _mediaEncoder;
 
     private readonly TMDbClient _client;
     private readonly PluginConfiguration _configuration;
@@ -63,12 +65,14 @@ public class TmdbManager : IDisposable
     /// <param name="httpClientFactory">Instance of the <see cref="IHttpClientFactory"/> interface.</param>
     /// <param name="applicationPaths">Instance of the <see cref="IApplicationPaths"/> interface.</param>
     /// <param name="libraryManager">Instance of the <see cref="ILibraryManager"/> interface.</param>
+    /// <param name="mediaEncoder">Instance of the <see cref="IMediaEncoder"/> interface.</param>
     public TmdbManager(
         ILogger<TmdbManager> logger,
         IMemoryCache memoryCache,
         IHttpClientFactory httpClientFactory,
         IApplicationPaths applicationPaths,
-        ILibraryManager libraryManager)
+        ILibraryManager libraryManager,
+        IMediaEncoder mediaEncoder)
     {
         _logger = logger;
         _memoryCache = memoryCache;
@@ -78,6 +82,7 @@ public class TmdbManager : IDisposable
         _httpClientFactory = httpClientFactory;
         _applicationPaths = applicationPaths;
         _libraryManager = libraryManager;
+        _mediaEncoder = mediaEncoder;
     }
 
     private string CachePath => Path.Join(_applicationPaths.CachePath, "tmdb-intro-trailers");
@@ -833,7 +838,7 @@ public class TmdbManager : IDisposable
                 await youTubeClient.Videos.DownloadAsync(
                     mediaSource.TranscodingUrl,
                     destinationPath,
-                    cfg => cfg.SetFFmpegPath(string.Empty),
+                    cfg => cfg.SetFFmpegPath(_mediaEncoder.EncoderPath),
                     cancellationToken: cancellationToken);
             }
             catch (Exception e)
