@@ -24,28 +24,16 @@
         <PackageReference Include="YoutubeExplode.Converter" Version="6.1.2" />
     </ItemGroup>
     <ItemGroup>
+      <None Remove="AngleSharp.dll" />
+      <None Remove="CliWrap.dll" />
       <None Remove="tmdb.png" />
+      <None Remove="TMDbLib.dll" />
+      <None Remove="YoutubeExplode.Converter.dll" />
+      <None Remove="YoutubeExplode.dll" />
     </ItemGroup>
     <ItemGroup>
       <EmbeddedResource Include="Config\configPage.html" />
       <EmbeddedResource Include="Images\jellyfin-plugin-tmdb.png" />
-    </ItemGroup>
-    <ItemGroup>
-      <None Update="AngleSharp.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="CliWrap.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="TMDbLib.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="YoutubeExplode.Converter.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="YoutubeExplode.dll">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
     </ItemGroup>
 
     <PropertyGroup>
