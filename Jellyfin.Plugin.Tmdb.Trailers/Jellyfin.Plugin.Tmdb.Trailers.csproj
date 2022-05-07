@@ -10,24 +10,25 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Jellyfin.Controller" Version="10.*-*" />
-      <PackageReference Include="TMDbLib" Version="1.9.2" />
-      <PackageReference Include="VideoLibrary" Version="3.1.9" />
+        <PackageReference Include="Jellyfin.Controller" Version="10.*-*"/>
+        <PackageReference Include="TMDbLib" Version="1.9.2"/>
+        <PackageReference Include="YoutubeExplode" Version="6.1.2"/>
+        <PackageReference Include="YoutubeExplode.Converter" Version="6.1.2"/>
     </ItemGroup>
 
     <!-- Code Analyzers-->
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0" PrivateAssets="All" />
-        <PackageReference Include="SerilogAnalyzer" Version="0.15.0" PrivateAssets="All" />
-        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406" PrivateAssets="All" />
-        <PackageReference Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0" PrivateAssets="All"/>
+        <PackageReference Include="SerilogAnalyzer" Version="0.15.0" PrivateAssets="All"/>
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406" PrivateAssets="All"/>
+        <PackageReference Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" PrivateAssets="All"/>
     </ItemGroup>
     <ItemGroup>
-      <None Remove="tmdb.png" />
+        <None Remove="tmdb.png"/>
     </ItemGroup>
     <ItemGroup>
-      <EmbeddedResource Include="Config\configPage.html" />
-      <EmbeddedResource Include="Images\jellyfin-plugin-tmdb.png" />
+        <EmbeddedResource Include="Config\configPage.html"/>
+        <EmbeddedResource Include="Images\jellyfin-plugin-tmdb.png"/>
     </ItemGroup>
 
     <PropertyGroup>

@@ -13,8 +13,10 @@ category: "Channels"
 artifacts:
   - "Jellyfin.Plugin.Tmdb.Trailers.dll"
   - "TMDbLib.dll"
-  - "libvideo.dll"
-  - "NiL.JS.dll"
+  - "AngleSharp.dll"
+  - "CliWrap.dll"
+  - "YoutubeExplode.dll"
+  - "YoutubeExplode.Converter.dll"
 changelog: |-
   - Add ability to user trailers as intro (#19) @crobibero
   - Fix saving changes (#17) @crobibero
