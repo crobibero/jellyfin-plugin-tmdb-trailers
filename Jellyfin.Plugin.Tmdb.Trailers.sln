@@ -1,9 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.32421.90
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jellyfin.Plugin.Tmdb.Trailers", "Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers.csproj", "{0353F378-2FA1-491C-85DB-F123B1BF7DDD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jellyfin.Plugin.Tmdb.Trailers", "Jellyfin.Plugin.Tmdb.Trailers\Jellyfin.Plugin.Tmdb.Trailers.csproj", "{0353F378-2FA1-491C-85DB-F123B1BF7DDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,11 +12,5 @@ Global
 		{0353F378-2FA1-491C-85DB-F123B1BF7DDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0353F378-2FA1-491C-85DB-F123B1BF7DDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0353F378-2FA1-491C-85DB-F123B1BF7DDD}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {2A049468-EDB1-4CC9-9B45-8FC95FD89E6A}
 	EndGlobalSection
 EndGlobal
