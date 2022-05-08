@@ -12,7 +12,7 @@
                 "version": "10.0.0.0",
                 "changelog": "- Fixes applied (#23) @m33ts4k0z",
                 "targetAbi": "10.8.0.0",
-                "sourceUrl": "https://github.com/crobibero/jellyfin-plugin-tmdb-trailers/releases/download/v9/tmdb-trailers_10.0.0.0.zipmanife",
+                "sourceUrl": "https://github.com/crobibero/jellyfin-plugin-tmdb-trailers/releases/download/v9/tmdb-trailers_10.0.0.0.zip",
                 "checksum": "e00885e1f297b4ffe35639e8e94f3495",
                 "timestamp": "2022-05-07T23:58:16Z"
             },
