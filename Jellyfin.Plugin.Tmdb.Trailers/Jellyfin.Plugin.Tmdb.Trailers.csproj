@@ -12,15 +12,15 @@
     <ItemGroup>
         <PackageReference Include="Jellyfin.Controller" Version="10.*-*" />
         <PackageReference Include="TMDbLib" Version="1.9.2" />
-        <PackageReference Include="YoutubeExplode" Version="6.1.2" />
-        <PackageReference Include="YoutubeExplode.Converter" Version="6.1.2" />
+        <PackageReference Include="YoutubeExplode" Version="6.2.0" />
+        <PackageReference Include="YoutubeExplode.Converter" Version="6.2.0" />
     </ItemGroup>
 
     <!-- Code Analyzers-->
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0" PrivateAssets="All" />
         <PackageReference Include="SerilogAnalyzer" Version="0.15.0" PrivateAssets="All" />
-        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406" PrivateAssets="All" />
+        <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435" PrivateAssets="All" />
         <PackageReference Include="SmartAnalyzers.MultithreadingAnalyzer" Version="1.1.31" PrivateAssets="All" />
     </ItemGroup>
     <ItemGroup>
