@@ -25,13 +25,13 @@ jobs:
           pip install --user jprm
 
       - name: Build Jellyfin Plugin
-        uses: oddstr13/jellyfin-plugin-repository-manager@348dfa62568e028288127a9bfd77ab9200b3896b # tag=v0.4.2
+        uses: oddstr13/jellyfin-plugin-repository-manager@a7795e010e63a6dcbbd5e6d8274f801d021f1045 # tag=v0.5.0
         id: jprm
         with:
           dotnet-target: net6.0
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # tag=v3.0.0
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # tag=v3.1.0
         with:
           name: build-artifact
           retention-days: 30
