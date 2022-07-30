@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b # tag=v3
         with:
           ref: "master"
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@c0d4ad69d8bd405d234f1c9166d383b7a4f69ed8 # tag=v2
         with:
           dotnet-version: 6.0.x
           
@@ -25,13 +25,13 @@ jobs:
           pip install --user jprm
 
       - name: Build Jellyfin Plugin
-        uses: oddstr13/jellyfin-plugin-repository-manager@v0.4.2
+        uses: oddstr13/jellyfin-plugin-repository-manager@348dfa62568e028288127a9bfd77ab9200b3896b # tag=v0.4.2
         id: jprm
         with:
           dotnet-target: net6.0
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3.0.0
+        uses: actions/upload-artifact@6673cd052c4cd6fcf4b4e6e60ea986c889389535 # tag=v3.0.0
         with:
           name: build-artifact
           retention-days: 30
@@ -41,7 +41,7 @@ jobs:
       - name: Upload to Release
         id: release
         if: ${{ github.event_name == 'release' }}
-        uses: shogo82148/actions-upload-release-asset@v1.6.2
+        uses: shogo82148/actions-upload-release-asset@8dbaa4469aa7256e70624d72f2567fac8f5341b3 # tag=v1.6.2
         with:
           upload_url: ${{ github.event.release.upload_url }}
           overwrite: true
