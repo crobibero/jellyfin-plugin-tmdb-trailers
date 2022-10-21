@@ -31,7 +31,7 @@ jobs:
           dotnet-target: net6.0
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # tag=v3.1.0
+        uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb # tag=v3.1.1
         with:
           name: build-artifact
           retention-days: 30
@@ -41,7 +41,7 @@ jobs:
       - name: Upload to Release
         id: release
         if: ${{ github.event_name == 'release' }}
-        uses: shogo82148/actions-upload-release-asset@8dbaa4469aa7256e70624d72f2567fac8f5341b3 # tag=v1.6.2
+        uses: shogo82148/actions-upload-release-asset@e94a7386c3c266a207386460471b1efb5c7431eb # tag=v1.6.3
         with:
           upload_url: ${{ github.event.release.upload_url }}
           overwrite: true
