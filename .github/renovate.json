@@ -8,7 +8,7 @@
       "description": "Group Youtube dependencies",
       "groupName": "Youtube",
       "matchPackagePrefixes": [
-        "YoutubeExplode.*"
+        "YoutubeExplode"
       ]
     }
   ]
