@@ -1,6 +1,15 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": [
-        "github>jellyfin/.github//renovate-presets/dotnet"
-    ]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>jellyfin/.github//renovate-presets/dotnet"
+  ],
+  "packageRules": [
+    {
+      "description": "Group Youtube dependencies",
+      "groupName": "Youtube",
+      "matchPackagePrefixes": [
+        "YoutubeExplode.*"
+      ]
+    }
+  ]
 }
