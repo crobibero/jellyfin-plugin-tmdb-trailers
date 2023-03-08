@@ -25,7 +25,7 @@ jobs:
           pip install --user jprm
 
       - name: Build Jellyfin Plugin
-        uses: oddstr13/jellyfin-plugin-repository-manager@a7795e010e63a6dcbbd5e6d8274f801d021f1045 # tag=v0.5.0
+        uses: oddstr13/jellyfin-plugin-repository-manager@4a2b165a3dc2cfc392db865a85f23c02e9f78c68 # v0.5.1
         id: jprm
         with:
           dotnet-target: net6.0
@@ -41,7 +41,7 @@ jobs:
       - name: Upload to Release
         id: release
         if: ${{ github.event_name == 'release' }}
-        uses: shogo82148/actions-upload-release-asset@e94a7386c3c266a207386460471b1efb5c7431eb # tag=v1.6.3
+        uses: shogo82148/actions-upload-release-asset@b016af922a61601d647ff60226adadbe146b7651 # v1.6.4
         with:
           upload_url: ${{ github.event.release.upload_url }}
           overwrite: true
