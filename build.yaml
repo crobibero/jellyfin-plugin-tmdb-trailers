@@ -1,7 +1,7 @@
 name: "TMDb Trailers"
 guid: "69104C31-D23F-4040-B99C-8913C09751D6"
-version: "10"
-targetAbi: "10.8.0.0"
+version: "untagged-2fcb4de6f78179399905"
+targetAbi: "10.8.10.0"
 framework: "net6.0"
 owner: "crobibero"
 overview: "Watch trailers from TMDb"
@@ -18,4 +18,29 @@ artifacts:
   - "YoutubeExplode.dll"
   - "YoutubeExplode.Converter.dll"
 changelog: |-
-  - Fixes applied (#23) @m33ts4k0z
+  - chore(deps): update youtube to v6.2.14 (#72) @renovate
+  - chore(deps): update ci dependencies - autoclosed (#66) @renovate
+  - chore(deps): update dependency microsoft.codeanalysis.netanalyzers to v7 (#56) @renovate
+  - chore(deps): update actions/checkout digest to 8e5e7e5 (#70) @renovate
+  - chore(deps): update youtube to v6.2.13 (#69) @renovate
+  - chore(deps): update youtube to v6.2.8 (#68) @renovate
+  - chore(deps): update youtube to v6.2.7 (#65) @renovate
+  - chore(deps): update dependency tmdblib to v2 (#59) @renovate
+  - chore(deps): update dependency youtubeexplode.converter to v6.2.6 (#61) @renovate
+  - chore(deps): update dependency youtubeexplode to v6.2.6 (#60) @renovate
+  - chore(deps): update actions/upload-artifact action to v3.1.2 (#58) @renovate
+  - chore(deps): update actions/checkout digest to ac59398 (#57) @renovate
+  - chore(deps): update dependency youtubeexplode.converter to v6.2.5 (#55) @renovate
+  - chore(deps): update dependency youtubeexplode to v6.2.5 (#54) @renovate
+  - chore(deps): update dependency youtubeexplode.converter to v6.2.4 (#51) @renovate
+  - chore(deps): update actions/setup-dotnet digest to 607fce5 (#49) @renovate
+  - chore(deps): update dependency youtubeexplode to v6.2.4 (#50) @renovate
+  - chore(deps): update ci dependencies (#46) @renovate
+  - chore(deps): update actions/setup-dotnet digest to 4d4a70f (#47) @renovate
+  - chore(deps): update actions/checkout digest to 93ea575 (#42) @renovate
+  - chore(deps): update actions/setup-dotnet action to v3 (#41) @renovate
+  - chore(deps): update .net dependencies to v6.2.2 (#39) @renovate
+  - chore(deps): update .net dependencies to v6.2.1 (#37) @renovate
+  - chore(deps): update ci dependencies (#36) @renovate
+  - chore(deps): update .net dependencies (#35) @renovate
+  - chore(deps): pin dependencies (#34) @renovate
