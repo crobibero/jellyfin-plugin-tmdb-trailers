@@ -1,6 +1,6 @@
 name: "TMDb Trailers"
 guid: "69104C31-D23F-4040-B99C-8913C09751D6"
-version: "untagged-2fcb4de6f78179399905"
+version: "11"
 targetAbi: "10.8.10.0"
 framework: "net6.0"
 owner: "crobibero"
