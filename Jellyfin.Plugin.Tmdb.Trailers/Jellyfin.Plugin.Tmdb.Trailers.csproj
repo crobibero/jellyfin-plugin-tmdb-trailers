@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <RootNamespace>Jellyfin.Plugin.Tmdb.Trailers</RootNamespace>
+        <Version>10.0.0.0</Version>
         <AssemblyVersion>10.0.0.0</AssemblyVersion>
         <FileVersion>10.0.0.0</FileVersion>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
