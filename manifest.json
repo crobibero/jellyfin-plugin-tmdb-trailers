@@ -9,6 +9,14 @@
         "imageUrl": "https://raw.githubusercontent.com/crobibero/jellyfin-plugin-tmdb-trailers/master/Jellyfin.Plugin.Tmdb.Trailers/Images/jellyfin-plugin-tmdb.png",
         "versions": [
             {
+                "version": "12.0.0.0",
+                "changelog": "- Downgrade tmdblib (#75) @crobibero",
+                "targetAbi": "10.8.10.0",
+                "sourceUrl": "https://github.com/crobibero/jellyfin-plugin-tmdb-trailers/releases/download/v12/tmdb-trailers_12.0.0.0.zip",
+                "checksum": "bfe08e0bf300b5c1e13e001abd54358f",
+                "timestamp": "2023-05-10T00:25:11Z"
+            },
+            {
                 "version": "11.0.0.0",
                 "changelog": "- chore(deps): update youtube to v6.2.14 (#72) @renovate\n- chore(deps): update ci dependencies - autoclosed (#66) @renovate\n- chore(deps): update dependency microsoft.codeanalysis.netanalyzers to v7 (#56) @renovate\n- chore(deps): update actions/checkout digest to 8e5e7e5 (#70) @renovate\n- chore(deps): update youtube to v6.2.13 (#69) @renovate\n- chore(deps): update youtube to v6.2.8 (#68) @renovate\n- chore(deps): update youtube to v6.2.7 (#65) @renovate\n- chore(deps): update dependency tmdblib to v2 (#59) @renovate\n- chore(deps): update dependency youtubeexplode.converter to v6.2.6 (#61) @renovate\n- chore(deps): update dependency youtubeexplode to v6.2.6 (#60) @renovate\n- chore(deps): update actions/upload-artifact action to v3.1.2 (#58) @renovate\n- chore(deps): update actions/checkout digest to ac59398 (#57) @renovate\n- chore(deps): update dependency youtubeexplode.converter to v6.2.5 (#55) @renovate\n- chore(deps): update dependency youtubeexplode to v6.2.5 (#54) @renovate\n- chore(deps): update dependency youtubeexplode.converter to v6.2.4 (#51) @renovate\n- chore(deps): update actions/setup-dotnet digest to 607fce5 (#49) @renovate\n- chore(deps): update dependency youtubeexplode to v6.2.4 (#50) @renovate\n- chore(deps): update ci dependencies (#46) @renovate\n- chore(deps): update actions/setup-dotnet digest to 4d4a70f (#47) @renovate\n- chore(deps): update actions/checkout digest to 93ea575 (#42) @renovate\n- chore(deps): update actions/setup-dotnet action to v3 (#41) @renovate\n- chore(deps): update .net dependencies to v6.2.2 (#39) @renovate\n- chore(deps): update .net dependencies to v6.2.1 (#37) @renovate\n- chore(deps): update ci dependencies (#36) @renovate\n- chore(deps): update .net dependencies (#35) @renovate\n- chore(deps): pin dependencies (#34) @renovate",
                 "targetAbi": "10.8.10.0",
