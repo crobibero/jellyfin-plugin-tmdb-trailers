@@ -13,8 +13,8 @@
     <ItemGroup>
         <PackageReference Include="Jellyfin.Controller" Version="10.*-*" />
         <PackageReference Include="TMDbLib" Version="1.9.2" />
-        <PackageReference Include="YoutubeExplode" Version="6.3.5" />
-        <PackageReference Include="YoutubeExplode.Converter" Version="6.3.5" />
+        <PackageReference Include="YoutubeExplode" Version="6.3.6" />
+        <PackageReference Include="YoutubeExplode.Converter" Version="6.3.6" />
     </ItemGroup>
 
     <!-- Code Analyzers-->
