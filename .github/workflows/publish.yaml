@@ -25,7 +25,7 @@ jobs:
           pip install --user jprm
 
       - name: Build Jellyfin Plugin
-        uses: oddstr13/jellyfin-plugin-repository-manager@eabb903cdac8a7f6d94df887c6910b5720ec48f9 # v1.0.11
+        uses: oddstr13/jellyfin-plugin-repository-manager@c50dc5dd020159a7aaa013ec7047f8043f8ea8a8 # v1.0.12
         id: jprm
         with:
           dotnet-target: net6.0
