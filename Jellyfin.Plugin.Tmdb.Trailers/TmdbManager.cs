@@ -54,8 +54,7 @@ public class TmdbManager : IDisposable
     private readonly ILibraryManager _libraryManager;
     private readonly IMediaEncoder _mediaEncoder;
 
-    private readonly TMDbClient _client;
-    private readonly PluginConfiguration _configuration;
+    private TMDbClient _client;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TmdbManager"/> class.
@@ -77,8 +76,6 @@ public class TmdbManager : IDisposable
         _logger = logger;
         _memoryCache = memoryCache;
 
-        _configuration = TmdbTrailerPlugin.Instance.Configuration;
-        _client = new TMDbClient(_configuration.ApiKey);
         _httpClientFactory = httpClientFactory;
         _applicationPaths = applicationPaths;
         _libraryManager = libraryManager;
@@ -86,6 +83,10 @@ public class TmdbManager : IDisposable
     }
 
     private string CachePath => Path.Join(_applicationPaths.CachePath, "tmdb-intro-trailers");
+
+    private PluginConfiguration Configuration => TmdbTrailerPlugin.Instance.Configuration;
+
+    private TMDbClient Client => _client ??= new TMDbClient(Configuration.ApiKey);
 
     /// <summary>
     /// Get channel items.
@@ -282,7 +283,7 @@ public class TmdbManager : IDisposable
     {
         if (disposing)
         {
-            _client?.Dispose();
+            Client?.Dispose();
         }
     }
 
@@ -459,10 +460,10 @@ public class TmdbManager : IDisposable
 
             do
             {
-                var results = await _client.GetMovieUpcomingListAsync(
-                        _configuration.Language,
+                var results = await Client.GetMovieUpcomingListAsync(
+                        Configuration.Language,
                         pageNumber,
-                        _configuration.Region,
+                        Configuration.Region,
                         cancellationToken)
                     .ConfigureAwait(false);
 
@@ -499,10 +500,10 @@ public class TmdbManager : IDisposable
 
             do
             {
-                var results = await _client.GetMovieNowPlayingListAsync(
-                        _configuration.Language,
+                var results = await Client.GetMovieNowPlayingListAsync(
+                        Configuration.Language,
                         pageNumber,
-                        _configuration.Region,
+                        Configuration.Region,
                         cancellationToken)
                     .ConfigureAwait(false);
 
@@ -539,10 +540,10 @@ public class TmdbManager : IDisposable
 
             do
             {
-                var results = await _client.GetMoviePopularListAsync(
-                        _configuration.Language,
+                var results = await Client.GetMoviePopularListAsync(
+                        Configuration.Language,
                         pageNumber,
-                        _configuration.Region,
+                        Configuration.Region,
                         cancellationToken)
                     .ConfigureAwait(false);
 
@@ -579,10 +580,10 @@ public class TmdbManager : IDisposable
 
             do
             {
-                var results = await _client.GetMovieTopRatedListAsync(
-                        _configuration.Language,
+                var results = await Client.GetMovieTopRatedListAsync(
+                        Configuration.Language,
                         pageNumber,
-                        _configuration.Region,
+                        Configuration.Region,
                         cancellationToken)
                     .ConfigureAwait(false);
 
@@ -612,7 +613,7 @@ public class TmdbManager : IDisposable
         try
         {
             _logger.LogDebug("{Function} Id={Id}", nameof(GetMovieStreamsAsync), movie.Id);
-            var response = await _client.GetMovieVideosAsync(movie.Id, cancellationToken).ConfigureAwait(false);
+            var response = await Client.GetMovieVideosAsync(movie.Id, cancellationToken).ConfigureAwait(false);
             _logger.LogDebug("{Function} Response={@Response}", nameof(GetMovieStreamsAsync), response);
             return (movie, response);
         }
