@@ -1,7 +1,7 @@
 name: "TMDb Trailers"
 guid: "69104C31-D23F-4040-B99C-8913C09751D6"
-version: "13"
-targetAbi: "10.9.0.0"
+version: "untagged-29332c2282dd26359c50"
+targetAbi: "10.9.11.0"
 framework: "net8.0"
 owner: "crobibero"
 overview: "Watch trailers from TMDb"
@@ -18,24 +18,14 @@ artifacts:
   - "YoutubeExplode.dll"
   - "YoutubeExplode.Converter.dll"
 changelog: |-
-  - chore(deps): update actions/checkout digest to 0ad4b8f (#114) @renovate
-  - chore(deps): update ci dependencies (#110) @renovate
-  - chore(deps): update youtube to v6.3.12 (#101) @renovate
-  - chore(deps): update dependency tmdblib to v2.1.0 (#102) @renovate
-  - chore(deps): update actions/setup-dotnet action to v4 (#103) @renovate
-  - chore(deps): update oddstr13/jellyfin-plugin-repository-manager action to v1.0.12 (#104) @renovate
-  - chore(deps): update actions/upload-artifact action to v4 - autoclosed (#105) @renovate
-  - chore(deps): update dependency stylecop.analyzers to v1.2.0-beta.556 (#106) @renovate
-  - chore(deps): update youtube to v6.3.7 (#99) @renovate
-  - chore(deps): update ci dependencies (#92) @renovate
-  - chore(deps): update dependency tmdblib to v2 (#82) @renovate
-  - chore(deps): update dependency microsoft.codeanalysis.netanalyzers to v7.0.4 (#83) @renovate
-  - chore(deps): update actions/checkout digest to b4ffde6 (#94) @renovate
-  - chore(deps): update oddstr13/jellyfin-plugin-repository-manager action to v1 (#95) @renovate
-  - chore(deps): update youtube to v6.3.6 (#97) @renovate
-  - chore(deps): update youtube to v6.3.5 (#93) @renovate
-  - chore(deps): update youtube to v6.3.3 (#79) @renovate
-  - chore(deps): update actions/setup-dotnet digest to 3447fd6 (#80) @renovate
-  - chore(deps): update dependency stylecop.analyzers to v1.2.0-beta.507 - autoclosed (#84) @renovate
-  - chore(deps): update shogo82148/actions-upload-release-asset action to v1.6.6 (#85) @renovate
-  - chore(deps): update actions/checkout action to v4 (#90) @renovate
+  - Update actions/checkout digest to eef6144 - autoclosed (#126) @renovate
+  - Update actions/upload-artifact action to v4.4.3 (#127) @renovate
+  - Update Youtube to 6.4.3 (#125) @renovate
+  - Update Youtube to 6.4.1 (#124) @renovate
+  - Update Youtube to 6.4.0 (#123) @renovate
+  - Update actions/setup-dotnet digest to 6bd8b7f (#122) @renovate
+  - Update CI dependencies (#121) @renovate
+  - chore(deps): update oddstr13/jellyfin-plugin-repository-manager action to v1.1.1 (#119) @renovate
+  - chore(deps): update actions/checkout digest to 692973e (#117) @renovate
+  - chore(deps): update youtube to v6.3.16 (#118) @renovate
+  - chore(deps): update youtube to v6.3.15 (#111) @renovate
