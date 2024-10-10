@@ -9,6 +9,14 @@
         "imageUrl": "https://raw.githubusercontent.com/crobibero/jellyfin-plugin-tmdb-trailers/master/Jellyfin.Plugin.Tmdb.Trailers/Images/jellyfin-plugin-tmdb.png",
         "versions": [
             {
+                "version": "14.0.0.0",
+                "changelog": "- Update actions/checkout digest to eef6144 - autoclosed (#126) @renovate\n- Update actions/upload-artifact action to v4.4.3 (#127) @renovate\n- Update Youtube to 6.4.3 (#125) @renovate\n- Update Youtube to 6.4.1 (#124) @renovate\n- Update Youtube to 6.4.0 (#123) @renovate\n- Update actions/setup-dotnet digest to 6bd8b7f (#122) @renovate\n- Update CI dependencies (#121) @renovate\n- chore(deps): update oddstr13/jellyfin-plugin-repository-manager action to v1.1.1 (#119) @renovate\n- chore(deps): update actions/checkout digest to 692973e (#117) @renovate\n- chore(deps): update youtube to v6.3.16 (#118) @renovate\n- chore(deps): update youtube to v6.3.15 (#111) @renovate",
+                "targetAbi": "10.9.11.0",
+                "sourceUrl": "https://github.com/crobibero/jellyfin-plugin-tmdb-trailers/releases/download/v14/tmdb-trailers_14.0.0.0.zip",
+                "checksum": "e9e8d347e509d9af8be1f7d520fc332f",
+                "timestamp": "2024-10-10T15:50:11Z"
+            },
+            {
                 "version": "13.0.0.0",
                 "changelog": "- chore(deps): update actions/checkout digest to 0ad4b8f (#114) @renovate\n- chore(deps): update ci dependencies (#110) @renovate\n- chore(deps): update youtube to v6.3.12 (#101) @renovate\n- chore(deps): update dependency tmdblib to v2.1.0 (#102) @renovate\n- chore(deps): update actions/setup-dotnet action to v4 (#103) @renovate\n- chore(deps): update oddstr13/jellyfin-plugin-repository-manager action to v1.0.12 (#104) @renovate\n- chore(deps): update actions/upload-artifact action to v4 - autoclosed (#105) @renovate\n- chore(deps): update dependency stylecop.analyzers to v1.2.0-beta.556 (#106) @renovate\n- chore(deps): update youtube to v6.3.7 (#99) @renovate\n- chore(deps): update ci dependencies (#92) @renovate\n- chore(deps): update dependency tmdblib to v2 (#82) @renovate\n- chore(deps): update dependency microsoft.codeanalysis.netanalyzers to v7.0.4 (#83) @renovate\n- chore(deps): update actions/checkout digest to b4ffde6 (#94) @renovate\n- chore(deps): update oddstr13/jellyfin-plugin-repository-manager action to v1 (#95) @renovate\n- chore(deps): update youtube to v6.3.6 (#97) @renovate\n- chore(deps): update youtube to v6.3.5 (#93) @renovate\n- chore(deps): update youtube to v6.3.3 (#79) @renovate\n- chore(deps): update actions/setup-dotnet digest to 3447fd6 (#80) @renovate\n- chore(deps): update dependency stylecop.analyzers to v1.2.0-beta.507 - autoclosed (#84) @renovate\n- chore(deps): update shogo82148/actions-upload-release-asset action to v1.6.6 (#85) @renovate\n- chore(deps): update actions/checkout action to v4 (#90) @renovate",
                 "targetAbi": "10.9.0.0",
