@@ -1,3 +1,6 @@
+> [!NOTE]  
+> Due to changes to YouTube this plugin no longer functions and is no longer maintained.
+
 <h1 align="center">Jellyfin TMDb Trailers Plugin</h1>
 <h3 align="center">Part of the <a href="https://jellyfin.media">Jellyfin Project</a></h3>
 
